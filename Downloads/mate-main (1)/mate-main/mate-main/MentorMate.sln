@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36414.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MentorMate", "MentorMate\MentorMate.csproj", "{D779E325-0DA3-4AE0-A21E-665F1F57DFF4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D779E325-0DA3-4AE0-A21E-665F1F57DFF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D779E325-0DA3-4AE0-A21E-665F1F57DFF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D779E325-0DA3-4AE0-A21E-665F1F57DFF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D779E325-0DA3-4AE0-A21E-665F1F57DFF4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1D4BBA42-2944-4E2E-AE7E-2F679EE8D40D}
+	EndGlobalSection
+EndGlobal
