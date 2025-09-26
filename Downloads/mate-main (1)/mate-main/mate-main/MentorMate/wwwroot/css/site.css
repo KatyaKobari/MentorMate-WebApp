@@ -1,0 +1,73 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+.mentor-fields, .mentee-fields {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #495057;
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+    .btn-primary:hover {
+        background-color: #0b5ed7;
+        border-color: #0a58ca;
+    }
+/* Ensure proper styling */
+.page-header {
+    padding: 24px 0 8px;
+}
+
+    .page-header h1 {
+        color: #4169E1;
+        font-weight: 700;
+    }
+
+    .page-header p {
+        color: #6c757d;
+        font-size: 1.1rem;
+    }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .navbar-nav {
+        text-align: center;
+        padding: 10px 0;
+    }
+
+        .navbar-nav .nav-item {
+            margin: 5px 0;
+        }
+}

@@ -1,0 +1,357 @@
+﻿@model MentorMate.ViewModels.MenteeProfileViewModel
+@{
+    ViewData["Title"] = "Mentee Profile";
+    Layout = "_Layout";
+}
+
+    <style>
+    .profile-container {
+        background: #f8f9fa;
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+    
+    .profile-card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e9ecef;
+        max-width: 800px;
+        margin: 0 auto;
+        }
+
+        .profile-header {
+        background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+            color: white;
+        padding: 2rem;
+        text-align: center;
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+            border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: bold;
+        margin: 0 auto 1rem;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .profile-name {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin: 0 0 0.5rem 0;
+    }
+    
+    .profile-title {
+        font-size: 1rem;
+        opacity: 0.9;
+        margin: 0;
+    }
+    
+    .profile-stats {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 1.5rem;
+    }
+    
+    .stat-item {
+        text-align: center;
+    }
+    
+    .stat-number {
+        display: block;
+        font-size: 1.2rem;
+        font-weight: 600;
+    }
+    
+    .stat-label {
+        font-size: 0.85rem;
+        opacity: 0.8;
+    }
+    
+    .profile-content {
+        padding: 1.5rem;
+    }
+    
+    .section {
+        margin-bottom: 1.5rem;
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+    
+    .info-item {
+        background: #f8f9fa;
+        padding: 0.75rem;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    }
+    
+    .info-label {
+        font-size: 0.85rem;
+        color: #6c757d;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+    
+    .info-value {
+        font-size: 0.95rem;
+        color: #333;
+        margin: 0;
+    }
+    
+    .interests-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .interest-tag {
+        background: #e8f5e8;
+        color: #2e7d32;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+                font-weight: 500;
+            }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 1.5rem;
+    }
+    
+    .btn-primary-custom, .btn-secondary-custom {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-primary-custom {
+        background: #2196f3;
+        color: white;
+    }
+    
+    .btn-primary-custom:hover {
+        background: #1976d2;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .btn-secondary-custom {
+        background: #f8f9fa;
+        color: #333;
+        border: 1px solid #dee2e6;
+    }
+    
+    .btn-secondary-custom:hover {
+        background: #e9ecef;
+        color: #333;
+        transform: translateY(-2px);
+    }
+    
+    /* LinkedIn Link Styling */
+    .linkedin-link {
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        word-break: break-all;
+        overflow-wrap: break-word;
+        max-width: 100%;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        transition: background-color 0.2s ease;
+    }
+    
+    .linkedin-link:hover {
+        background-color: rgba(0, 123, 255, 0.1);
+        text-decoration: none;
+    }
+    
+    .linkedin-text {
+        word-break: break-all;
+        overflow-wrap: break-word;
+        max-width: 100%;
+        display: inline-block;
+        font-size: 0.9rem;
+    }
+    
+    .info-item .linkedin-link {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    @@media (max-width: 768px) {
+        .profile-stats {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+</style>
+
+<div class="profile-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="profile-card">
+    <!-- Profile Header -->
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            @{
+                                var userGender = Context.Session.GetString("UserGender") ?? "Male";
+                                var genderIcon = userGender == "Female" ? "♀" : "♂";
+                            }
+                            @genderIcon
+                        </div>
+                        <h1 class="profile-name">@Model.FullName</h1>
+                        <p class="profile-title">@Model.FieldOfStudy Student</p>
+                        
+                        <div class="profile-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">@Model.FieldOfStudy</span>
+                                <span class="stat-label">Field of Study</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">@(Model.Interests?.Split(',').Length ?? 0)</span>
+                                <span class="stat-label">Interests</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">Active</span>
+                                <span class="stat-label">Status</span>
+                            </div>
+                        </div>
+    </div>
+
+                    <!-- Profile Content -->
+                    <div class="profile-content">
+                        <!-- Basic Info -->
+                        <div class="section">
+                            <h3 class="section-title">
+                                <i class="bi bi-info-circle me-2"></i>Basic Information
+                            </h3>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">Full Name</div>
+                                    <p class="info-value">@Model.FullName</p>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Email</div>
+                                    <p class="info-value">@Model.Email</p>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Gender</div>
+                                    <p class="info-value">@Model.Gender</p>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Field of Study</div>
+                                    <p class="info-value">@Model.FieldOfStudy</p>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model.LinkedInUrl))
+                                {
+                                    <div class="info-item">
+                                        <div class="info-label">LinkedIn</div>
+                                        <div class="info-value">
+                                            <a href="@Model.LinkedInUrl" target="_blank" class="text-primary linkedin-link">
+                                                <i class="bi bi-linkedin me-1"></i>
+                                                <span class="linkedin-text">@Model.LinkedInUrl</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+            </div>
+
+            <!-- Interests -->
+                        @if (!string.IsNullOrEmpty(Model.Interests))
+                        {
+                            <div class="section">
+                                <h3 class="section-title">
+                                    <i class="bi bi-heart me-2"></i>Interests
+                                </h3>
+                                <div class="interests-container">
+                                    @foreach (var interest in Model.Interests.Split(',').Select(s => s.Trim()).Take(10))
+                                    {
+                                        <span class="interest-tag">@interest</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        
+                        <!-- Bio -->
+                        @if (!string.IsNullOrEmpty(Model.Bio))
+                        {
+                            <div class="section">
+                                <h3 class="section-title">
+                                    <i class="bi bi-person-lines-fill me-2"></i>About
+                                </h3>
+                                <div class="info-item">
+                                    <p class="info-value" style="line-height: 1.6; margin: 0;">@Model.Bio</p>
+                                </div>
+                            </div>
+                        }
+                        
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+                            @{
+                                var currentUserId = Context.Session.GetInt32("UserId");
+                                var isViewingOwnProfile = currentUserId == Model.MenteeId;
+                            }
+                            
+                            @if (isViewingOwnProfile)
+                            {
+                                <!-- Own profile - show edit button -->
+                                <a asp-controller="Mentee" asp-action="EditProfile" class="btn-primary-custom">
+                                    <i class="bi bi-pencil-square me-2"></i>Edit Profile
+                                </a>
+                            }
+                            else
+                            {
+                                <!-- Other mentee's profile - show chat button -->
+                                <a asp-controller="Chat" asp-action="Index" class="btn-primary-custom">
+                                    <i class="bi bi-chat-dots me-2"></i>Start Chat
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

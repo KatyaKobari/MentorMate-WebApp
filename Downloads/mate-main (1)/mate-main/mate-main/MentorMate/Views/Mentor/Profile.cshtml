@@ -1,0 +1,679 @@
+﻿@model MentorMate.ViewModels.MentorProfileViewModel
+@{
+    ViewData["Title"] = "Mentor Profile";
+    Layout = "_Layout";
+}
+
+    <style>
+    .profile-container {
+        background: #f8f9fa;
+        min-height: 100vh;
+        padding: 2rem 0;
+    }
+    
+    .profile-card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e9ecef;
+        max-width: 800px;
+        margin: 0 auto;
+        }
+
+        .profile-header {
+        background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+            color: white;
+        padding: 2rem;
+        text-align: center;
+        border-radius: 12px 12px 0 0;
+    }
+    
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+            border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: bold;
+        margin: 0 auto 1rem;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+    }
+    
+    .profile-name {
+        font-size: 1.8rem;
+        font-weight: 600;
+        margin: 0 0 0.5rem 0;
+    }
+    
+    .profile-title {
+        font-size: 1rem;
+        opacity: 0.9;
+        margin: 0;
+    }
+    
+    .profile-stats {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 1.5rem;
+        background: linear-gradient(135deg, #4169E1, #87CEFA);
+        padding: 1.5rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(65, 105, 225, 0.3);
+    }
+    
+    .stat-item {
+        text-align: center;
+        flex: 1;
+        min-width: 100px;
+    }
+    
+    .stat-number {
+        display: block;
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #fff;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .stat-label {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.95);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+    
+    .profile-content {
+        padding: 1.5rem;
+    }
+    
+    .section {
+        margin-bottom: 1.5rem;
+    }
+    
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+    
+    .info-item {
+        background: #f8f9fa;
+        padding: 0.75rem;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+    }
+    
+    .info-label {
+        font-size: 0.85rem;
+        color: #6c757d;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+    
+    .info-value {
+        font-size: 0.95rem;
+        color: #333;
+        margin: 0;
+    }
+    
+    .skills-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    
+    .skill-tag {
+        background: #e3f2fd;
+        color: #1976d2;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+                font-weight: 500;
+            }
+
+    .rating-container {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .stars {
+            color: #ffc107;
+        }
+
+    .rating-text {
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
+    
+    .action-buttons {
+            display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 1.5rem;
+    }
+    
+    .btn-primary-custom, .btn-secondary-custom {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-primary-custom {
+        background: #2196f3;
+        color: white;
+    }
+    
+    .btn-primary-custom:hover {
+        background: #1976d2;
+        color: white;
+        transform: translateY(-2px);
+    }
+    
+    .btn-secondary-custom {
+        background: #f8f9fa;
+        color: #333;
+        border: 1px solid #dee2e6;
+    }
+    
+    .btn-secondary-custom:hover {
+        background: #e9ecef;
+                color: #333;
+        transform: translateY(-2px);
+    }
+    
+    .review-form {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        border: 1px solid #e9ecef;
+            }
+
+        .star-rating {
+        display: flex;
+        gap: 0.25rem;
+        margin-bottom: 1rem;
+    }
+    
+    .star {
+        font-size: 1.5rem;
+        color: #ddd;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+    
+    .star.active {
+        color: #ffc107;
+    }
+    
+    .reviews-section {
+        margin-top: 1rem;
+    }
+    
+    .review-item {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 0.75rem;
+        border: 1px solid #e9ecef;
+    }
+    
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    .review-rating {
+            color: #ffc107;
+    }
+    
+    .review-date {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    
+    .review-comment {
+        color: #333;
+        margin: 0;
+    }
+    
+    /* LinkedIn Link Styling */
+    .linkedin-link {
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        word-break: break-all;
+        overflow-wrap: break-word;
+        max-width: 100%;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        transition: background-color 0.2s ease;
+    }
+    
+    .linkedin-link:hover {
+        background-color: rgba(0, 123, 255, 0.1);
+        text-decoration: none;
+    }
+    
+    .linkedin-text {
+        word-break: break-all;
+        overflow-wrap: break-word;
+        max-width: 100%;
+        display: inline-block;
+            font-size: 0.9rem;
+        }
+    
+    .info-item .linkedin-link {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    @@media (max-width: 768px) {
+        .profile-stats {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .action-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+</style>
+
+<div class="profile-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="profile-card">
+                    <!-- Profile Header -->
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            @{
+                                var userGender = Context.Session.GetString("UserGender") ?? "Male";
+                                var genderIcon = userGender == "Female" ? "♀" : "♂";
+                            }
+                            @genderIcon
+                        </div>
+                        <h1 class="profile-name">@Model.FullName</h1>
+                        <p class="profile-title">@Model.Expertise Expert</p>
+                        
+                        <div class="profile-stats">
+                            <div class="stat-item">
+                                <span class="stat-number">@Model.YearsOfExperience</span>
+                                <span class="stat-label">Years Experience</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">@Model.Rating.ToString("0.0")</span>
+                                <span class="stat-label">Rating</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">@Model.ReviewCount</span>
+                                <span class="stat-label">Reviews</span>
+                            </div>
+                </div>
+            </div>
+
+                    <!-- Profile Content -->
+                    <div class="profile-content">
+                        <!-- Basic Info -->
+                        <div class="section">
+                            <h3 class="section-title">
+                                <i class="bi bi-info-circle me-2"></i>Basic Information
+                            </h3>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">Full Name</div>
+                                    <p class="info-value">@Model.FullName</p>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Email</div>
+                                    <p class="info-value">@Model.Email</p>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Gender</div>
+                                    <p class="info-value">@Model.Gender</p>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Expertise</div>
+                                    <p class="info-value">@Model.Expertise</p>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Experience</div>
+                                    <p class="info-value">@Model.YearsOfExperience years</p>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Availability</div>
+                                    <p class="info-value">@Model.Availability</p>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">Rating</div>
+                                    <div class="rating-container">
+                                        <div class="stars">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                                <i class="bi bi-star-fill @(i <= Math.Round(Model.Rating) ? "active" : "")" style="color: @(i <= Math.Round(Model.Rating) ? "#ffc107" : "#ddd")"></i>
+                                        }
+                                        </div>
+                                        <span class="rating-text">@Model.Rating.ToString("0.0") (@Model.ReviewCount reviews)</span>
+                                    </div>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model.LinkedInUrl))
+                                {
+                                    <div class="info-item">
+                                        <div class="info-label">LinkedIn</div>
+                                        <div class="info-value">
+                                            <a href="@Model.LinkedInUrl" target="_blank" class="text-primary linkedin-link">
+                                                <i class="bi bi-linkedin me-1"></i>
+                                                <span class="linkedin-text">@Model.LinkedInUrl</span>
+                                            </a>
+                                        </div>
+                                    </div>
+                                }
+                                </div>
+                        </div>
+                        
+                        <!-- Skills -->
+                        @if (!string.IsNullOrEmpty(Model.Skills))
+                        {
+                            <div class="section">
+                                <h3 class="section-title">
+                                    <i class="bi bi-tools me-2"></i>Skills & Technologies
+                                </h3>
+                                <div class="skills-container">
+                                    @foreach (var skill in Model.Skills.Split(',').Select(s => s.Trim()).Take(10))
+                                    {
+                                        <span class="skill-tag">@skill</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        
+                        <!-- Bio -->
+                        @if (!string.IsNullOrEmpty(Model.Bio))
+                        {
+                            <div class="section">
+                                <h3 class="section-title">
+                                    <i class="bi bi-person-lines-fill me-2"></i>About
+                                </h3>
+                                <div class="info-item">
+                                    <p class="info-value" style="line-height: 1.6; margin: 0;">@Model.Bio</p>
+                                </div>
+                            </div>
+                        }
+                        
+                        <!-- Reviews Section -->
+                        <div class="section">
+                            <h3 class="section-title">
+                                <i class="bi bi-star-fill me-2"></i>Reviews
+                            </h3>
+                            
+                            @{
+                                var currentUserId = Context.Session.GetInt32("UserId");
+                                var currentUserRole = Context.Session.GetString("UserRole");
+                                var isMentee = currentUserRole == "Mentee";
+                                var isViewingOwnProfile = currentUserId == Model.MentorId;
+                            }
+                            
+                            @if (isMentee && !isViewingOwnProfile)
+                            {
+                                <!-- Add Review Form - Only for mentees viewing other mentors' profiles -->
+                                <div class="review-form">
+                                    <h5>Write a Review</h5>
+                                    <form id="reviewForm">
+                                        <input type="hidden" name="MentorId" value="@Model.MentorId" />
+                                        
+                                        <div class="star-rating" id="starRating">
+                                            <span class="star" data-rating="1">★</span>
+                                            <span class="star" data-rating="2">★</span>
+                                            <span class="star" data-rating="3">★</span>
+                                            <span class="star" data-rating="4">★</span>
+                                            <span class="star" data-rating="5">★</span>
+                                        </div>
+                                        <input type="hidden" name="Rating" id="ratingInput" value="5" />
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label">Your Review</label>
+                                            <textarea name="Comment" class="form-control" rows="3" placeholder="Share your experience with this mentor..." required></textarea>
+                                        </div>
+                                        
+                                        <button type="submit" class="btn btn-primary-custom">
+                                            <i class="bi bi-send me-2"></i>Submit Review
+                                        </button>
+                                    </form>
+                                </div>
+                            }
+                            else if (isMentee && isViewingOwnProfile)
+                            {
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    You can only review other mentors, not yourself.
+                                </div>
+                            }
+                            else if (currentUserRole == "Mentor" && !isViewingOwnProfile)
+                            {
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    Only mentees can review mentors.
+                                </div>
+                            }
+                            
+                            <!-- Reviews List -->
+                            <div class="reviews-section">
+                                <h6>Recent Reviews</h6>
+                                <div id="reviewsList">
+                                    <p class="text-muted">Loading reviews...</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+                            @if (isViewingOwnProfile)
+                            {
+                                <!-- Own profile - show edit button -->
+                                <a asp-controller="Mentor" asp-action="EditProfile" class="btn-primary-custom">
+                                    <i class="bi bi-pencil-square me-2"></i>Edit Profile
+                                </a>
+                            }
+                            else
+                            {
+                                <!-- Other mentor's profile - show chat and request buttons -->
+                                <a asp-controller="Chat" asp-action="Index" class="btn-primary-custom">
+                                    <i class="bi bi-chat-dots me-2"></i>Start Chat
+                                </a>
+                                @if (isMentee && !Model.HasExistingRelationship)
+                                {
+                                    <button class="btn-secondary-custom" onclick="requestMentorship(@Model.MentorId)">
+                                        <i class="bi bi-calendar2-check me-2"></i>Request Mentorship
+                                    </button>
+                                }
+                                @if (isMentee && Model.HasExistingRelationship)
+                                {
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle me-1"></i>Connected
+                                    </span>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Request mentorship function
+    function requestMentorship(mentorId) {
+        // Redirect to mentee dashboard with a request modal
+        window.location.href = '/Mentee/Dashboard?requestMentorId=' + mentorId;
+    }
+    
+    // Review form submission
+        document.getElementById('reviewForm')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+        const data = {
+            MentorId: parseInt(formData.get('MentorId')),
+            Rating: parseInt(formData.get('Rating')),
+            Comment: formData.get('Comment')
+        };
+
+            try {
+            const response = await fetch('@Url.Action("AddReview", "Review")', {
+                    method: 'POST',
+                    headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                alert('Review submitted successfully!');
+                    location.reload();
+                } else {
+                    alert('Error: ' + result.message);
+                }
+            } catch (error) {
+                alert('Error submitting review');
+            }
+        });
+
+    // Load reviews on page load
+    loadReviews();
+
+    async function loadReviews() {
+        try {
+            const mentorId = @Model.MentorId;
+            const response = await fetch(`@Url.Action("GetMentorReviews", "Review")?mentorId=${mentorId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                displayReviews(result.data.reviews);
+            } else {
+                document.getElementById('reviewsList').innerHTML = '<p class="text-muted">No reviews yet.</p>';
+            }
+        } catch (error) {
+            console.error('Error loading reviews:', error);
+            document.getElementById('reviewsList').innerHTML = '<p class="text-muted">Error loading reviews.</p>';
+        }
+    }
+
+    function displayReviews(reviews) {
+        const reviewsList = document.getElementById('reviewsList');
+        
+        if (reviews.length === 0) {
+            reviewsList.innerHTML = '<p class="text-muted">No reviews yet.</p>';
+            return;
+        }
+
+        reviewsList.innerHTML = reviews.map(review => `
+            <div class="review-item mb-3 p-3 border rounded">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                        <strong>${review.menteeName || 'Anonymous'}</strong>
+                        <div class="star-rating">
+                            ${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}
+                        </div>
+                    </div>
+                    <small class="text-muted">${new Date(review.createdAt).toLocaleDateString()}</small>
+                </div>
+                <p class="mb-0">${review.comment}</p>
+            </div>
+        `).join('');
+    }
+
+    // Star rating functionality
+    const stars = document.querySelectorAll('.star');
+    const ratingInput = document.getElementById('ratingInput');
+    
+    // Initialize stars with default rating
+    if (stars.length > 0 && ratingInput) {
+        const defaultRating = parseInt(ratingInput.value) || 5;
+        stars.forEach((s, index) => {
+            if (index < defaultRating) {
+                s.classList.add('active');
+            } else {
+                s.classList.remove('active');
+            }
+        });
+    }
+    
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            const rating = parseInt(this.dataset.rating);
+            ratingInput.value = rating;
+
+            stars.forEach((s, index) => {
+                if (index < rating) {
+                    s.classList.add('active');
+                } else {
+                    s.classList.remove('active');
+                }
+            });
+        });
+
+        star.addEventListener('mouseenter', function() {
+            const rating = parseInt(this.dataset.rating);
+            stars.forEach((s, index) => {
+                if (index < rating) {
+                    s.classList.add('active');
+                } else {
+                    s.classList.remove('active');
+                }
+            });
+        });
+    });
+    
+    // Reset stars on mouse leave
+    document.getElementById('starRating')?.addEventListener('mouseleave', function() {
+        const currentRating = parseInt(ratingInput.value);
+        stars.forEach((s, index) => {
+            if (index < currentRating) {
+                s.classList.add('active');
+            } else {
+                s.classList.remove('active');
+            }
+            });
+        });
+    </script>

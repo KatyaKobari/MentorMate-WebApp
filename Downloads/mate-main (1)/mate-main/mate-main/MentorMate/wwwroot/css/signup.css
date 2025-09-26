@@ -1,0 +1,22 @@
+﻿body {
+    background: linear-gradient(135deg, #4169E1, #87CEFA);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.signup-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.btn-next {
+    background: #4169E1;
+    color: #fff;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+    .btn-next:hover {
+        background: #27408B;
+    }

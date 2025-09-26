@@ -1,0 +1,286 @@
+﻿@model MentorMate.ViewModels.RegisterStep2ViewModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MentorMate - Register Step 2</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <style>
+        body {
+            background: #ffffff;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .signup-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            font-weight: 600;
+            color: #6c757d;
+        }
+
+            .step.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .step.completed {
+            background: #28a745;
+            color: white;
+        }
+
+        .role-selection {
+            margin: 2rem 0;
+        }
+
+        .role-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid #e9ecef;
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .role-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
+        }
+
+        .role-card.selected::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .role-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .role-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .role-description {
+            color: #6c757d;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            }
+
+        .btn-next, .btn-prev {
+            border-radius: 15px;
+            padding: 12px 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+        }
+
+            .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-next:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-next:hover:before {
+            left: 100%;
+            }
+
+        .btn-prev {
+            background: #6c757d;
+            border: none;
+            color: white;
+        }
+
+        .btn-prev:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .welcome-text {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .welcome-text h2 {
+            color: #2c3e50;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .welcome-text p {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+
+        .selection-hint {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex justify-content-center align-items-center min-vh-100 p-3">
+        <div class="signup-container w-100" style="max-width: 600px;">
+            <div class="p-4">
+                <!-- Step Indicator -->
+                <div class="step-indicator">
+                    <div class="step completed">1</div>
+                    <div class="step active">2</div>
+                    <div class="step">3</div>
+                </div>
+                
+                <!-- Welcome Text -->
+                <div class="welcome-text">
+                    <h2>Choose Your Role</h2>
+                    <p>Select how you'd like to participate in our community</p>
+                </div>
+
+                <form asp-action="RegisterStep2" method="post" id="roleForm">
+                    <div class="role-selection">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="role-card" data-role="Mentee" id="menteeCard">
+                                    <i class="bi bi-mortarboard-fill role-icon"></i>
+                                    <div class="role-title">Mentee</div>
+                                    <div class="role-description">
+                                        I'm looking to learn and grow with guidance from experienced mentors in my field.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="role-card" data-role="Mentor" id="mentorCard">
+                                    <i class="bi bi-briefcase-fill role-icon"></i>
+                                    <div class="role-title">Mentor</div>
+                                    <div class="role-description">
+                                        I want to share my knowledge and help others grow in their professional journey.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="selection-hint">
+                            <i class="bi bi-info-circle me-1"></i>
+                            You can change this later in your profile settings
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" id="Role" name="Role" required />
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="RegisterStep1" class="btn btn-prev">
+                            <i class="bi bi-arrow-left me-2"></i>Back
+                        </a>
+                        <button type="submit" class="btn btn-next" id="nextBtn" disabled>
+                            Continue to Step 3<i class="bi bi-arrow-right ms-2"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const roleCards = document.querySelectorAll('.role-card');
+            const roleInput = document.getElementById('Role');
+            const nextBtn = document.getElementById('nextBtn');
+
+            roleCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Remove selected class from all cards
+                    roleCards.forEach(c => c.classList.remove('selected'));
+                    
+                    // Add selected class to clicked card
+                    this.classList.add('selected');
+                    
+                    // Set the role value
+                    roleInput.value = this.dataset.role;
+                    
+                    // Enable next button
+                    nextBtn.disabled = false;
+                });
+            });
+
+            // Form validation
+            document.getElementById('roleForm').addEventListener('submit', function(e) {
+                if (!roleInput.value) {
+                    e.preventDefault();
+                    alert('Please select a role to continue.');
+                    return false;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

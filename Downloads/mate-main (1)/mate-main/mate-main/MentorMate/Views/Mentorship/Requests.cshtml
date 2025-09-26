@@ -1,0 +1,61 @@
+﻿@model List<MentorMate.ViewModels.MentorshipRequestViewModel>
+@{
+    ViewData["Title"] = "My Requests";
+    Layout = "_Layout";
+}
+
+<div class="container mt-4">
+    <h2>My Requests</h2>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Mentor</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var request in Model)
+                    {
+                        <tr>
+                            <td>@request.MentorName</td>
+                            <td>@request.Date</td>
+                            <td>@request.Time</td>
+                            <td>@request.Type</td>
+                            <td>
+                                <span class="badge @GetStatusBadgeClass(request.Status)">@request.Status</span>
+                            </td>
+                            <td>@request.Message</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            You haven't made any requests yet.
+        </div>
+    }
+</div>
+
+@functions {
+    public string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "Pending" => "bg-warning",
+            "Approved" => "bg-success",
+            "Rejected" => "bg-danger",
+            _ => "bg-secondary"
+        };
+    }
+}

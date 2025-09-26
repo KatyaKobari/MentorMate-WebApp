@@ -1,0 +1,327 @@
+﻿@model List<MentorMate.Models.MentorSpacePost>
+@{
+    ViewData["Title"] = "Mentor Space";
+    Layout = "_Layout";
+}
+
+<div class="container space-container mt-4">
+    <!-- Feed -->
+    <div class="feed" id="postsFeed">
+        @foreach (var post in Model)
+        {
+            <div class="post-card">
+                <div class="post-header">
+                    @{
+                        var userGender = post.CreatedBy.Gender ?? "Male";
+                        var genderIcon = userGender == "Female" ? "♀" : "♂";
+                        var genderColor = userGender == "Female" ? "#e91e63" : "#2196f3";
+                    }
+                    <div class="avatar-sm rounded-circle d-flex align-items-center justify-content-center" style="background: @genderColor; color: white; width: 50px; height: 50px;">
+                        @genderIcon
+                    </div>
+                    <div>
+                        <h6>
+                            @post.CreatedBy.FullName
+                            <span class="badge bg-light text-dark ms-1">
+                                @(Context.RequestServices.GetService<AppDbContext>().MentorProfiles.Any(m => m.MentorId == post.CreatedById) ? "Mentor" : "Mentee")
+                            </span>
+                        </h6>
+                        <div class="post-meta">@post.CreatedAt.ToString("f") - @post.Type</div>
+                    </div>
+                </div>
+                <div class="post-body">
+                    <strong>@post.Title</strong>
+                    <p class="mt-1 mb-0">@post.Content</p>
+                </div>
+                <div class="post-actions d-flex gap-2">
+                    <button class="btn btn-outline-secondary btn-sm" onclick="toggleComments(@post.PostId)">
+                        <i class="bi bi-chat"></i> Comments (@post.Replies.Count)
+                    </button>
+                </div>
+                <div id="comments-@post.PostId" class="comments d-none">
+                    @foreach (var comment in post.Replies.Where(r => r.ParentReplyId == null))
+                    {
+                        <div class="comment">
+                            @{
+                                var commentUserGender = comment.CreatedBy.Gender ?? "Male";
+                                var commentGenderIcon = commentUserGender == "Female" ? "♀" : "♂";
+                                var commentGenderColor = commentUserGender == "Female" ? "#e91e63" : "#2196f3";
+                            }
+                            <div class="avatar-sm rounded-circle d-flex align-items-center justify-content-center" style="background: @commentGenderColor; color: white; width: 40px; height: 40px;">
+                                @commentGenderIcon
+                            </div>
+                            <div>
+                                <p><strong>@comment.CreatedBy.FullName:</strong> @comment.Content</p>
+                                <button class="btn btn-link btn-sm p-0" onclick="showReplyBox(@post.PostId, @comment.ReplyId)">Reply</button>
+                                <div id="reply-box-@post.PostId-@comment.ReplyId" class="reply-box d-none">
+                                    <input type="text" id="reply-input-@post.PostId-@comment.ReplyId" class="form-control form-control-sm mb-1" placeholder="Write a reply...">
+                                    <button class="btn btn-sm btn-outline-primary" onclick="addReply(@post.PostId, @comment.ReplyId)">Send</button>
+                                </div>
+                                @foreach (var reply in comment.ChildReplies)
+                                {
+                                    <div class="comment ms-4">
+                                        @{
+                                            var replyUserGender = reply.CreatedBy.Gender ?? "Male";
+                                            var replyGenderIcon = replyUserGender == "Female" ? "♀" : "♂";
+                                            var replyGenderColor = replyUserGender == "Female" ? "#e91e63" : "#2196f3";
+                                        }
+                                        <div class="avatar-sm rounded-circle d-flex align-items-center justify-content-center" style="background: @replyGenderColor; color: white; width: 40px; height: 40px;">
+                                            @replyGenderIcon
+                                        </div>
+                                        <div>
+                                            <p><strong>@reply.CreatedBy.FullName:</strong> @reply.Content</p>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                    <div class="d-flex gap-2 mt-2">
+                        <input type="text" id="comment-input-@post.PostId" class="form-control form-control-sm" placeholder="Write a comment...">
+                        <button class="btn btn-sm btn-primary" onclick="addComment(@post.PostId)">Post</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Floating Create Post Button -->
+<div class="create-btn" data-bs-toggle="modal" data-bs-target="#createPostModal">
+    <i class="bi bi-plus"></i>
+</div>
+
+<!-- Create Post Modal -->
+<div class="modal fade" id="createPostModal">
+    <div class="modal-dialog">
+        <form class="modal-content" id="postForm">
+            <div class="modal-header">
+                <h5 class="modal-title">Create New Post</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="postTitle" class="form-control mb-3" placeholder="Post title" required>
+                <textarea id="postContent" class="form-control mb-3" placeholder="Share your question, experience, or advice..." rows="4" required></textarea>
+                <select id="postType" class="form-select mb-3" required>
+                    <option value="Question">Question</option>
+                    <option value="Advice">Advice</option>
+                    <option value="Experience">Experience</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Post</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        /* نفس الأنماط السابقة */
+        :root {
+            --primary: #4169E1;
+            --secondary: #87CEFA;
+            --light: #f4f7ff;
+            --dark: #1f1f1f;
+            --gray: #6c757d;
+        }
+
+        .space-container {
+            display: flex;
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .feed {
+            flex: 3;
+        }
+
+        .create-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,.2);
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+            .create-btn:hover {
+                background: var(--dark);
+            }
+
+        .post-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.05);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+            .post-header h6 {
+                margin: 0;
+                font-size: 15px;
+            }
+
+        .post-meta {
+            font-size: 13px;
+            color: var(--gray);
+        }
+
+        .post-body {
+            font-size: 15px;
+            margin-bottom: 15px;
+        }
+
+        .comments {
+            border-top: 1px solid #eee;
+            margin-top: 12px;
+            padding-top: 12px;
+        }
+
+        .comment {
+            display: flex;
+            align-items: start;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+            .comment p {
+                background: #f4f7ff;
+                padding: 8px 12px;
+                border-radius: 12px;
+                margin: 0;
+                font-size: 14px;
+            }
+
+        .reply-box {
+            margin-left: 50px;
+            margin-top: 5px;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // دالة لعرض/إخفاء التعليقات
+        function toggleComments(postId) {
+            const commentsDiv = document.getElementById(`comments-${postId}`);
+            if (commentsDiv) {
+                commentsDiv.classList.toggle('d-none');
+            }
+        }
+
+        // دالة لعرض مربع الرد
+        function showReplyBox(postId, commentId) {
+            const replyBox = document.getElementById(`reply-box-${postId}-${commentId}`);
+            if (replyBox) {
+                replyBox.classList.toggle('d-none');
+            }
+        }
+
+        // إضافة تعليق جديد
+        async function addComment(postId) {
+            const input = document.getElementById(`comment-input-${postId}`);
+            const content = input.value.trim();
+
+            if (!content) return;
+
+            try {
+                const formData = new FormData();
+                formData.append('postId', postId);
+                formData.append('content', content);
+
+                const response = await fetch('@Url.Action("AddComment", "Community")', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    // إعادة تحميل الصفحة لرؤية التعليق الجديد
+                    location.reload();
+                } else {
+                    alert('Error adding comment');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error adding comment');
+            }
+        }
+
+        // إضافة رد على تعليق
+        async function addReply(postId, parentReplyId) {
+            const input = document.getElementById(`reply-input-${postId}-${parentReplyId}`);
+            const content = input.value.trim();
+
+            if (!content) return;
+
+            try {
+                const formData = new FormData();
+                formData.append('postId', postId);
+                formData.append('content', content);
+                formData.append('parentReplyId', parentReplyId);
+
+                const response = await fetch('@Url.Action("AddComment", "Community")', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    // إعادة تحميل الصفحة لرؤية الرد الجديد
+                    location.reload();
+                } else {
+                    alert('Error adding reply');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error adding reply');
+            }
+        }
+
+        // إنشاء منشور جديد
+        document.getElementById('postForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const title = document.getElementById('postTitle').value;
+            const content = document.getElementById('postContent').value;
+            const type = document.getElementById('postType').value;
+
+            try {
+                const formData = new FormData();
+                formData.append('title', title);
+                formData.append('content', content);
+                formData.append('type', type);
+
+                const response = await fetch('@Url.Action("CreatePost", "Community")', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    // إعادة تحميل الصفحة لرؤية المنشور الجديد
+                    location.reload();
+                } else {
+                    alert('Error creating post');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error creating post');
+            }
+        });
+    </script>
+}

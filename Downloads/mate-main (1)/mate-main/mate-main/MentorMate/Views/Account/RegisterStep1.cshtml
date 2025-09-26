@@ -1,0 +1,379 @@
+﻿@model MentorMate.ViewModels.RegisterStep1ViewModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MentorMate - Sign Up Step 1</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="~/css/signup.css" rel="stylesheet" />
+    <style>
+        body {
+            background: #ffffff;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .signup-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            font-weight: 600;
+            color: #6c757d;
+        }
+        
+        .step.active {
+            background: linear-gradient(135deg, #2196f3, #1976d2);
+            color: white;
+        }
+        
+        .step.completed {
+            background: #28a745;
+            color: white;
+        }
+        
+        .form-floating {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-floating .form-control {
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+            padding: 1rem 0.75rem;
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+        
+        .form-floating .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            background: white;
+        }
+        
+        .form-floating label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+        
+        .btn-next {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 15px;
+            padding: 12px 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-next:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-next:hover:before {
+            left: 100%;
+        }
+        
+        .welcome-text {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .welcome-text h2 {
+            color: #2c3e50;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .welcome-text p {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+        
+        .password-strength {
+            margin-top: 0.5rem;
+        }
+        
+        .strength-bar {
+            height: 4px;
+            background: #e9ecef;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+        
+        .strength-fill {
+            height: 100%;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+        
+        .strength-weak { background: #dc3545; width: 25%; }
+        .strength-fair { background: #ffc107; width: 50%; }
+        .strength-good { background: #17a2b8; width: 75%; }
+        .strength-strong { background: #28a745; width: 100%; }
+
+        /* Gender Selection Styles */
+        .gender-card {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid #e9ecef;
+            border-radius: 15px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .gender-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .gender-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .gender-card.selected::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .gender-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+            color: #6c757d;
+            transition: all 0.3s ease;
+        }
+
+        .gender-card:hover .gender-icon {
+            color: #667eea;
+            transform: scale(1.1);
+        }
+
+        .gender-card.selected .gender-icon {
+            color: #667eea;
+            transform: scale(1.1);
+        }
+
+        .gender-label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1rem;
+        }
+
+        .gender-card.selected .gender-label {
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex justify-content-center align-items-center min-vh-100 p-3">
+        <div class="signup-container w-100" style="max-width: 500px;">
+            <div class="p-4">
+                <!-- Step Indicator -->
+                <div class="step-indicator">
+                    <div class="step active">1</div>
+                    <div class="step">2</div>
+                    <div class="step">3</div>
+                </div>
+                
+                <!-- Welcome Text -->
+                <div class="welcome-text">
+                    <h2>Welcome to MentorMate</h2>
+                    <p>Let's get you started with your account</p>
+                </div>
+
+                <form asp-action="RegisterStep1" method="post" id="registerForm">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="form-floating">
+                        <input asp-for="FullName" class="form-control" placeholder="Full Name" id="fullName" />
+                        <label for="fullName"><i class="bi bi-person me-2"></i>Full Name</label>
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="form-floating">
+                        <input asp-for="Email" class="form-control" placeholder="Email" type="email" id="email" />
+                        <label for="email"><i class="bi bi-envelope me-2"></i>Email Address</label>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="form-floating">
+                        <input asp-for="Password" class="form-control" placeholder="Password" type="password" id="password" />
+                        <label for="password"><i class="bi bi-lock me-2"></i>Password</label>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                        <div class="password-strength">
+                            <div class="strength-bar">
+                                <div class="strength-fill" id="strengthFill"></div>
+                            </div>
+                            <small class="text-muted" id="strengthText">Password strength</small>
+                        </div>
+                    </div>
+                    
+                    <div class="form-floating">
+                        <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm Password" type="password" id="confirmPassword" />
+                        <label for="confirmPassword"><i class="bi bi-lock-fill me-2"></i>Confirm Password</label>
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <!-- Gender Selection -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-dark mb-3">
+                            <i class="bi bi-gender-ambiguous me-2"></i>Gender *
+                        </label>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="gender-card" data-gender="Male" id="maleCard">
+                                    <div class="gender-icon">
+                                        <i class="bi bi-gender-male"></i>
+                                    </div>
+                                    <div class="gender-label">Male</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="gender-card" data-gender="Female" id="femaleCard">
+                                    <div class="gender-icon">
+                                        <i class="bi bi-gender-female"></i>
+                                    </div>
+                                    <div class="gender-label">Female</div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" asp-for="Gender" id="genderInput" />
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-next w-100 mt-3">
+                        <i class="bi bi-arrow-right me-2"></i>Continue to Step 2
+                    </button>
+                </form>
+                
+                <div class="text-center mt-4">
+                    <p class="text-muted">Already have an account? 
+                        <a asp-action="Login" class="text-decoration-none fw-semibold" style="color: #667eea;">Sign In</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        // Password strength indicator
+        document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+            
+            let strength = 0;
+            let strengthLabel = '';
+            
+            if (password.length >= 8) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            strengthFill.className = 'strength-fill';
+            
+            if (strength < 2) {
+                strengthFill.classList.add('strength-weak');
+                strengthLabel = 'Weak';
+            } else if (strength < 3) {
+                strengthFill.classList.add('strength-fair');
+                strengthLabel = 'Fair';
+            } else if (strength < 4) {
+                strengthFill.classList.add('strength-good');
+                strengthLabel = 'Good';
+            } else {
+                strengthFill.classList.add('strength-strong');
+                strengthLabel = 'Strong';
+            }
+            
+            strengthText.textContent = `Password strength: ${strengthLabel}`;
+        });
+        
+        // Gender selection
+        document.querySelectorAll('.gender-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // Remove selected class from all cards
+                document.querySelectorAll('.gender-card').forEach(c => c.classList.remove('selected'));
+                
+                // Add selected class to clicked card
+                this.classList.add('selected');
+                
+                // Set the gender value
+                document.getElementById('genderInput').value = this.dataset.gender;
+            });
+        });
+
+        // Form validation
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const gender = document.getElementById('genderInput').value;
+            
+            if (password !== confirmPassword) {
+                e.preventDefault();
+                alert('Passwords do not match!');
+                return false;
+            }
+            
+            if (!gender) {
+                e.preventDefault();
+                alert('Please select your gender!');
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>

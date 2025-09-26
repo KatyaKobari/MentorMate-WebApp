@@ -1,0 +1,187 @@
+@{
+    ViewData["Title"] = "About Us";
+    Layout = "_Layout";
+}
+
+<style>
+    .hero {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 4rem 0;
+    }
+
+    .info-card, .team-card {
+        border-radius: 14px;
+        transition: 0.3s ease;
+        border: 1px solid #e9ecef;
+    }
+
+    .info-card:hover, .team-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .avatar {
+        width: 70px;
+        height: 70px;
+        line-height: 70px;
+        border-radius: 50%;
+        font-size: 24px;
+        font-weight: bold;
+        margin: 0 auto;
+    }
+
+    .section-title {
+        color: #333;
+        font-weight: 700;
+    }
+
+    .text-primary {
+        color: #2196f3 !important;
+    }
+
+    .text-info {
+        color: #17a2b8 !important;
+    }
+
+    .text-secondary {
+        color: #6c757d !important;
+    }
+</style>
+
+<!-- Hero -->
+<section class="hero text-center py-5">
+    <div class="container">
+        <h1 class="fw-bold display-5 text-dark">About MentorMate</h1>
+        <p class="lead text-muted">Connecting mentors and mentees worldwide for growth and success 🚀</p>
+    </div>
+</section>
+
+<!-- Mission / Vision -->
+<section class="container my-5">
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="info-card text-center p-4 shadow-sm h-100 bg-white">
+                <i class="bi bi-bullseye text-primary fs-1 mb-3"></i>
+                <h4 class="fw-semibold text-dark">Our Mission</h4>
+                <p class="text-muted">Empowering people through mentorship by providing accessible and impactful guidance for learners everywhere.</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="info-card text-center p-4 shadow-sm h-100 bg-white">
+                <i class="bi bi-lightbulb text-info fs-1 mb-3"></i>
+                <h4 class="fw-semibold text-dark">Our Vision</h4>
+                <p class="text-muted">A world where everyone has the opportunity to learn, grow, and achieve success with the help of experienced mentors.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Team -->
+<section class="container my-5">
+    <h3 class="fw-bold text-center mb-4 text-dark">Meet Our Team</h3>
+    <div class="row g-4 justify-content-center">
+
+        <div class="col-md-4 col-lg-3">
+            <div class="team-card text-center p-4 shadow-sm h-100 bg-white">
+                <div class="avatar bg-primary text-white mb-3">K</div>
+                <h5 class="mb-1 text-dark">Katya Kobari</h5>
+                <p class="text-muted small">Backend Developer</p>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-3">
+            <div class="team-card text-center p-4 shadow-sm h-100 bg-white">
+                <div class="avatar bg-info text-white mb-3">A</div>
+                <h5 class="mb-1 text-dark">Ahmad Tayeh</h5>
+                <p class="text-muted small">Frontend Developer</p>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-lg-3">
+            <div class="team-card text-center p-4 shadow-sm h-100 bg-white">
+                <div class="avatar bg-secondary text-white mb-3">A</div>
+                <h5 class="mb-1 text-dark">Alaa Abu Mussa</h5>
+                <p class="text-muted small">Project Manager</p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- What We Do -->
+<section class="container my-5">
+    <h3 class="fw-bold text-center mb-4 text-dark">What We Do</h3>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="info-card text-center p-4 shadow-sm h-100 bg-white">
+                <i class="bi bi-people text-primary fs-1 mb-3"></i>
+                <h5 class="fw-semibold text-dark">Connect</h5>
+                <p class="text-muted">We connect experienced professionals with eager learners to create meaningful mentorship relationships.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="info-card text-center p-4 shadow-sm h-100 bg-white">
+                <i class="bi bi-book text-info fs-1 mb-3"></i>
+                <h5 class="fw-semibold text-dark">Educate</h5>
+                <p class="text-muted">We provide a platform for knowledge sharing, skill development, and career guidance.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="info-card text-center p-4 shadow-sm h-100 bg-white">
+                <i class="bi bi-graph-up text-success fs-1 mb-3"></i>
+                <h5 class="fw-semibold text-dark">Grow</h5>
+                <p class="text-muted">We help both mentors and mentees grow professionally and personally through meaningful connections.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Our Values -->
+<section class="container my-5">
+    <h3 class="fw-bold text-center mb-4 text-dark">Our Values</h3>
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="d-flex align-items-start">
+                <i class="bi bi-heart text-danger fs-3 me-3"></i>
+                <div>
+                    <h5 class="fw-semibold text-dark">Passion</h5>
+                    <p class="text-muted">We are passionate about helping people achieve their goals and reach their full potential.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="d-flex align-items-start">
+                <i class="bi bi-shield-check text-success fs-3 me-3"></i>
+                <div>
+                    <h5 class="fw-semibold text-dark">Trust</h5>
+                    <p class="text-muted">We build trust through transparency, reliability, and genuine care for our community.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="d-flex align-items-start">
+                <i class="bi bi-lightbulb text-warning fs-3 me-3"></i>
+                <div>
+                    <h5 class="fw-semibold text-dark">Innovation</h5>
+                    <p class="text-muted">We continuously innovate to provide the best possible mentorship experience.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="d-flex align-items-start">
+                <i class="bi bi-globe text-primary fs-3 me-3"></i>
+                <div>
+                    <h5 class="fw-semibold text-dark">Accessibility</h5>
+                    <p class="text-muted">We make mentorship accessible to everyone, regardless of background or location.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Add any JavaScript functionality here if needed
+        console.log("About page loaded successfully");
+    });
+</script>

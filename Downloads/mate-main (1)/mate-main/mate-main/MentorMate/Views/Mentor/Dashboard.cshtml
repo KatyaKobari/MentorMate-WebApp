@@ -1,0 +1,280 @@
+﻿@model MentorMate.ViewModels.MentorDashboardViewModel
+@{
+    ViewData["Title"] = "Mentor Dashboard";
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <style>
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 8px 28px rgba(39, 64, 139, 0.06);
+            border: 1px solid rgba(14, 39, 82, 0.04);
+        }
+
+        .avatar-sm {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(65, 105, 225, 0.12);
+        }
+
+        .request-item, .mentee-card {
+            padding: 12px;
+            border-radius: 10px;
+            background: #ffffff;
+            border: 1px solid rgba(14, 39, 82, 0.03);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Responsive Design */
+        @@media (max-width: 768px) {
+            .request-item, .mentee-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .mentee-card .d-flex {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .mentee-card .d-flex.gap-2 {
+                width: 100%;
+                justify-content: flex-end;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+        }
+
+        @@media (max-width: 576px) {
+            .container {
+                padding: 0.5rem;
+            }
+            
+            .card {
+                margin-bottom: 1rem;
+            }
+            
+            .btn-sm {
+                font-size: 0.8rem;
+                padding: 0.25rem 0.5rem;
+            }
+        }
+    </style>
+}
+
+    <!-- Page Content -->
+    <div class="container mt-4">
+        <h3 class="mb-3">Mentor Dashboard</h3>
+
+        <!-- Requests -->
+        <div class="card mb-4">
+            <div class="card-header fw-semibold">Incoming Requests</div>
+            <div class="card-body">
+                @if (Model.Requests != null && Model.Requests.Any())
+                {
+                    @foreach (var request in Model.Requests)
+                    {
+                        <div class="request-item d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="fw-semibold">@request.MenteeName</div>
+                                <small class="text-muted">@request.Message</small>
+                                <div class="mt-1">
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar me-1"></i>@request.ProposedDate.ToString("d")
+                                        <i class="bi bi-clock ms-2 me-1"></i>@request.ProposedTime
+                                        <i class="bi bi-chat-dots ms-2 me-1"></i>@request.SessionType
+                                    </small>
+                                </div>
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-success me-1" onclick="acceptRequest(@request.Id)">
+                                    <i class="bi bi-check"></i>
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="rejectRequest(@request.Id)">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">No new requests.</p>
+                }
+            </div>
+        </div>
+
+        <!-- Mentees / Connections -->
+        <div class="card mb-4">
+            <div class="card-header fw-semibold">My Connections</div>
+            <div class="card-body">
+                @if (Model.Connections != null && Model.Connections.Any())
+                {
+                    @foreach (var connection in Model.Connections)
+                    {
+                        <div class="mentee-card">
+                            <div class="d-flex align-items-center">
+                                @{
+                                    var menteeGender = connection.Gender ?? "Male";
+                                    var menteeGenderIcon = menteeGender == "Female" ? "bi-gender-female" : "bi-gender-male";
+                                    var menteeGenderColor = menteeGender == "Female" ? "#e91e63" : "#2196f3";
+                                }
+                                <div class="avatar-sm d-flex align-items-center justify-content-center" style="background: @menteeGenderColor; color: white; border-radius: 50%; width: 44px; height: 44px;">
+                                    <i class="bi @menteeGenderIcon fs-5"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <div class="fw-semibold">@connection.MenteeName</div>
+                                    <div class="text-muted small">@connection.FieldOfStudy</div>
+                                    <small class="text-muted">Connected since: @connection.ConnectedSince.ToString("d")</small>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a asp-controller="Mentee" asp-action="Profile" asp-route-id="@connection.MenteeId" class="btn btn-outline-info btn-sm">
+                                    <i class="bi bi-person"></i> View Profile
+                                </a>
+                                <button class="btn btn-outline-primary btn-sm" onclick="messageMentee(@connection.MenteeId)">
+                                    <i class="bi bi-chat"></i> Message
+                                </button>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">No connections yet.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toast" class="toast" role="alert">
+            <div class="toast-header">
+                <strong class="me-auto">MentorMate</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toastMsg"></div>
+        </div>
+    </div>
+
+    <script>
+        // Dashboard specific functionality
+    </script>
+    <script>
+        // DOM Elements
+        const markAllReadBtn = document.getElementById("markAllRead");
+        const toastEl = document.getElementById("toast");
+        const toastMsg = document.getElementById("toastMsg");
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize navbar dropdowns
+            if (typeof window.initializeNavbarDropdowns === 'function') {
+                window.initializeNavbarDropdowns();
+            }
+            
+            // Mark all notifications as read
+            if (markAllReadBtn) {
+                markAllReadBtn.addEventListener('click', markAllNotificationsAsRead);
+            }
+        });
+
+        // Accept request
+        async function acceptRequest(requestId) {
+            try {
+                const response = await fetch('@Url.Action("AcceptRequest", "MentorDashBoard")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ requestId: requestId })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showToast(result.message);
+                    // Refresh the page to update the lists
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Error accepting request', 'error');
+            }
+        }
+
+        // Reject request
+        async function rejectRequest(requestId) {
+            try {
+                const response = await fetch('@Url.Action("RejectRequest", "MentorDashBoard")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ requestId: requestId })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showToast(result.message);
+                    // Refresh the page to update the lists
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Error rejecting request', 'error');
+            }
+        }
+
+        // Mark all notifications as read
+        async function markAllNotificationsAsRead() {
+            try {
+                const response = await fetch('@Url.Action("MarkNotificationsAsRead", "MentorDashBoard")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showToast(result.message);
+                    // Refresh the page to update notification count
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showToast(result.message, 'error');
+                }
+            } catch (error) {
+                showToast('Error marking notifications as read', 'error');
+            }
+        }
+
+        // Message mentee
+        function messageMentee(menteeId) {
+            // Redirect to chat page
+            window.location.href = '@Url.Action("Index", "Chat")';
+        }
+
+        // Show toast message
+        function showToast(message, type = 'success') {
+            toastMsg.textContent = message;
+            toastEl.className = `toast align-items-center text-bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+    </script>

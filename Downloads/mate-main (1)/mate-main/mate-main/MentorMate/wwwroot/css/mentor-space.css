@@ -1,0 +1,164 @@
+﻿:root {
+    --primary: #4169E1;
+    --secondary: #87CEFA;
+    --light: #f4f7ff;
+    --dark: #1f1f1f;
+    --gray: #6c757d;
+}
+
+body {
+    background: var(--light);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.navbar {
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    color: white !important;
+}
+
+.avatar-sm {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.space-container {
+    display: flex;
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.feed {
+    flex: 3;
+}
+
+.sidebar {
+    flex: 1;
+    background: #fff;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,.05);
+    height: fit-content;
+}
+
+.create-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,.2);
+    cursor: pointer;
+    z-index: 1000;
+}
+
+    .create-btn:hover {
+        background: var(--dark);
+        transform: scale(1.1);
+        transition: all 0.3s ease;
+    }
+
+.post-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.05);
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: transform 0.2s ease;
+}
+
+    .post-card:hover {
+        transform: translateY(-2px);
+    }
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+    .post-header h6 {
+        margin: 0;
+        font-size: 15px;
+    }
+
+.post-meta {
+    font-size: 13px;
+    color: var(--gray);
+}
+
+.post-body {
+    font-size: 15px;
+    margin-bottom: 15px;
+}
+
+    .post-body strong {
+        color: var(--primary);
+        font-size: 1.1em;
+    }
+
+.comments {
+    border-top: 1px solid #eee;
+    margin-top: 12px;
+    padding-top: 12px;
+}
+
+.comment {
+    display: flex;
+    align-items: start;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+    .comment p {
+        background: #f4f7ff;
+        padding: 8px 12px;
+        border-radius: 12px;
+        margin: 0;
+        font-size: 14px;
+        flex: 1;
+    }
+
+.reply-box {
+    margin-left: 50px;
+    margin-top: 5px;
+}
+
+/* Badge styles */
+.badge {
+    font-size: 0.7em;
+    padding: 0.3em 0.6em;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .space-container {
+        flex-direction: column;
+    }
+
+    .create-btn {
+        bottom: 15px;
+        right: 15px;
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+
+    .post-card {
+        padding: 15px;
+    }
+}

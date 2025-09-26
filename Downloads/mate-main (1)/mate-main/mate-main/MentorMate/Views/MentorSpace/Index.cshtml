@@ -1,0 +1,157 @@
+﻿@model IEnumerable<MentorMate.ViewModels.MentorSpacePostViewModel>
+@{
+    ViewData["Title"] = "Mentor Space";
+    Layout = "_Layout";
+}
+
+@section Styles {
+    <link href="~/css/mentor-space.css" rel="stylesheet" />
+}
+
+    <div class="container space-container">
+        <!-- Feed -->
+        <div class="feed" id="postsFeed">
+            @foreach (var post in Model)
+            {
+                <div class="post-card">
+                    <div class="post-header">
+                        <img src="@post.CreatedBy.AvatarUrl" class="avatar-sm" alt="@post.CreatedBy.FullName">
+                        <div>
+                            <h6>
+                                @post.CreatedBy.FullName
+                                <span class="badge @(post.CreatedBy.Role == "Mentor" ? "bg-primary" : "bg-secondary") ms-1">
+                                    @post.CreatedBy.Role
+                                </span>
+                            </h6>
+                            <div class="post-meta">@post.CreatedAt.ToString("g") - @post.Type</div>
+                        </div>
+                    </div>
+                    <div class="post-body">
+                        <strong>@post.Title</strong>
+                        <p class="mt-2 mb-0">@post.Content</p>
+                    </div>
+                    <div class="post-actions d-flex gap-2">
+                        <button class="btn btn-outline-primary btn-sm" onclick="toggleComments(@post.PostId)">
+                            <i class="bi bi-chat"></i> Comments (@post.CommentCount)
+                        </button>
+                    </div>
+                    <div id="comments-@post.PostId" class="comments d-none">
+                        @foreach (var comment in post.Comments)
+                        {
+                            <partial name="_CommentPartial" model="comment" />
+                        }
+                        <div class="d-flex gap-2 mt-3">
+                            <input type="text" id="comment-input-@post.PostId" class="form-control form-control-sm" placeholder="Write a comment...">
+                            <button class="btn btn-sm btn-primary" onclick="addComment(@post.PostId)">
+                                <i class="bi bi-send"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Floating Create Post Button -->
+    <div class="create-btn" data-bs-toggle="modal" data-bs-target="#createPostModal">
+        <i class="bi bi-plus"></i>
+    </div>
+
+    <!-- Create Post Modal -->
+    <div class="modal fade" id="createPostModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Post</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form asp-controller="MentorSpace" asp-action="CreatePost" method="post">
+                    <div class="modal-body">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-3">
+                            <label for="postTitle" class="form-label">Title</label>
+                            <input type="text" id="postTitle" name="Title" class="form-control" placeholder="Post title" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="postContent" class="form-label">Content</label>
+                            <textarea id="postContent" name="Content" class="form-control" placeholder="Share your question, experience, or advice..." rows="4" required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="postType" class="form-label">Type</label>
+                            <select id="postType" name="Type" class="form-select" required>
+                                <option value="Question">Question</option>
+                                <option value="Advice">Advice</option>
+                                <option value="Experience">Experience</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Post</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap & JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        // إظهار/إخفاء التعليقات
+        function toggleComments(postId) {
+            const commentsDiv = document.getElementById(`comments-${postId}`);
+            commentsDiv.classList.toggle('d-none');
+        }
+
+        // إضافة تعليق جديد
+        async function addComment(postId) {
+            const input = document.getElementById(`comment-input-${postId}`);
+            const content = input.value.trim();
+
+            if (!content) return;
+
+            try {
+                const response = await fetch('@Url.Action("CreateReply", "MentorSpace")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    body: JSON.stringify({
+                        PostId: postId,
+                        Content: content
+                    })
+                });
+
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('Error adding comment');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error adding comment');
+            }
+        }
+
+        // AJAX لتحميل البوستات (إذا بدك تحديث ديناميكي)
+        async function loadPosts() {
+            try {
+                const response = await fetch('@Url.Action("GetPosts", "MentorSpace")');
+                const posts = await response.json();
+                // معالجة البوستات هنا
+            } catch (error) {
+                console.error('Error loading posts:', error);
+            }
+        }
+
+        // تهيئة عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            // أي تهيئة إضافية هنا
+        });
+    </script>

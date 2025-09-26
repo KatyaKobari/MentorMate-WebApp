@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MentorMate - Sign Up</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="css/signup.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="signup-card">
+        <h2 class="text-center mb-3 text-primary">Sign Up</h2>
+
+        <div class="progress">
+            <div id="progressBar" class="progress-bar bg-primary" style="width: 33%"></div>
+        </div>
+
+        <form id="signupForm">
+            <!-- Step 1 -->
+            <div class="step active">
+                <div class="mb-3"><input type="text" class="form-control" placeholder="Full Name" required></div>
+                <div class="mb-3"><input type="email" class="form-control" placeholder="Email" required></div>
+                <div class="mb-3"><input type="password" class="form-control" placeholder="Password" required></div>
+                <button type="button" class="btn btn-next w-100">Next</button>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step">
+                <p class="text-center fw-bold mb-3">Choose Your Role</p>
+                <div class="d-flex gap-2 mb-3">
+                    <div class="flex-fill text-center border rounded p-3 role-card" data-role="mentee">
+                        <i class="bi bi-mortarboard-fill fs-2 text-primary"></i>
+                        <h6>Mentee</h6>
+                    </div>
+                    <div class="flex-fill text-center border rounded p-3 role-card" data-role="mentor">
+                        <i class="bi bi-briefcase-fill fs-2 text-primary"></i>
+                        <h6>Mentor</h6>
+                    </div>
+                </div>
+                <input type="hidden" id="role" name="role" required>
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-prev">Back</button>
+                    <button type="button" class="btn btn-next">Next</button>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step">
+                <div id="extraFields"></div>
+                <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-prev">Back</button>
+                    <button type="submit" class="btn btn-submit btn-next">Sign Up</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="text-center my-3">or</div>
+        <div class="d-flex gap-2">
+            <button class="social-btn"><i class="bi bi-google text-danger me-2"></i> Google</button>
+            <button class="social-btn"><i class="bi bi-facebook text-primary me-2"></i> Facebook</button>
+        </div>
+    </div>
+
+    <script src="assets/js/auth.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

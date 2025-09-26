@@ -1,0 +1,72 @@
+﻿@model MentorMate.ViewModels.MentorSpaceReplyViewModel
+
+<div class="comment">
+    <img src="@Model.CreatedBy.AvatarUrl" class="avatar-sm" alt="@Model.CreatedBy.FullName">
+    <div class="flex-grow-1">
+        <p>
+            <strong>@Model.CreatedBy.FullName:</strong>
+            <span class="text-muted small ms-2">@Model.CreatedAt.ToString("g")</span>
+        </p>
+        <p class="mb-1">@Model.Content</p>
+
+        <button class="btn btn-link btn-sm p-0 text-decoration-none" onclick="showReplyBox(@Model.ReplyId)">
+            <i class="bi bi-reply"></i> Reply
+        </button>
+
+        <div id="reply-box-@Model.ReplyId" class="reply-box d-none mt-2">
+            <div class="d-flex gap-2">
+                <input type="text" id="reply-input-@Model.ReplyId" class="form-control form-control-sm" placeholder="Write a reply...">
+                <button class="btn btn-sm btn-primary" onclick="addReply(@Model.ReplyId)">
+                    <i class="bi bi-send"></i>
+                </button>
+            </div>
+        </div>
+
+        @if (Model.Replies != null && Model.Replies.Any())
+        {
+            <div class="replies mt-2">
+                @foreach (var reply in Model.Replies)
+                {
+                    <partial name="_CommentPartial" model="reply" />
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    function showReplyBox(replyId) {
+        const replyBox = document.getElementById(`reply-box-${replyId}`);
+        replyBox.classList.toggle('d-none');
+    }
+
+    async function addReply(parentReplyId) {
+        const input = document.getElementById(`reply-input-${parentReplyId}`);
+        const content = input.value.trim();
+
+        if (!content) return;
+
+        try {
+            const response = await fetch('@Url.Action("CreateReply", "MentorSpace")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                },
+                body: JSON.stringify({
+                    ParentReplyId: parentReplyId,
+                    Content: content
+                })
+            });
+
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Error adding reply');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error adding reply');
+        }
+    }
+</script>

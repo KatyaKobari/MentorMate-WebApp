@@ -1,0 +1,35 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    var userId = HttpContextAccessor.HttpContext.Session.GetInt32("UserId");
+    var userName = HttpContextAccessor.HttpContext.Session.GetString("UserName");
+    var userRole = HttpContextAccessor.HttpContext.Session.GetString("UserRole");
+}
+
+@if (userId.HasValue)
+{
+    <div class="dropdown ms-3">
+        <a class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" href="#" data-bs-toggle="dropdown">
+            <img class="avatar-sm me-2" src="https://i.pravatar.cc/40?u=@userId" alt="@userName" />
+            <span class="fw-semibold">@userName</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profile</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Settings</a></li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+                <a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout">
+                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+}
+else
+{
+    <div class="ms-3">
+        <a class="btn btn-outline-light me-2" asp-controller="Account" asp-action="Login">Login</a>
+        <a class="btn btn-light" asp-controller="Account" asp-action="Register">Sign Up</a>
+    </div>
+}

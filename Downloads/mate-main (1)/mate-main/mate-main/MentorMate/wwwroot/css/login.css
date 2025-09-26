@@ -1,0 +1,230 @@
+﻿body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+}
+
+.split {
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.left {
+    flex: 1;
+    background: linear-gradient(135deg, #4169E1, #87CEFA);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    padding: 2rem;
+    min-height: 40vh;
+    position: relative;
+}
+
+.left-content {
+    max-width: 500px;
+    text-align: center;
+    z-index: 2;
+}
+
+.left h1 {
+    font-weight: 700;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.left p {
+    font-size: 1.1rem;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+.login-illustration {
+    max-height: 220px;
+    width: auto;
+    max-width: 100%;
+    transition: transform 0.3s ease;
+}
+
+    .login-illustration:hover {
+        transform: translateY(-5px);
+    }
+
+.right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    min-height: 60vh;
+    padding: 2rem;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 450px;
+}
+
+.login-box {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+
+    .login-box h2 {
+        color: #4169E1;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        text-align: center;
+        font-size: 2rem;
+    }
+
+.form-control {
+    border-radius: 12px;
+    padding: 1rem;
+    border: 2px solid #e9ecef;
+    margin-bottom: 1.25rem;
+    transition: all 0.3s ease;
+}
+
+    .form-control:focus {
+        border-color: #4169E1;
+        box-shadow: 0 0 0 0.3rem rgba(65, 105, 225, 0.15);
+        transform: translateY(-2px);
+    }
+
+.form-check-input {
+    border-radius: 4px;
+    border: 2px solid #dee2e6;
+}
+
+    .form-check-input:checked {
+        background-color: #4169E1;
+        border-color: #4169E1;
+    }
+
+.btn-login {
+    background: linear-gradient(135deg, #4169E1, #5B7EFF);
+    color: white;
+    border-radius: 12px;
+    padding: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    margin-top: 1rem;
+    box-shadow: 0 4px 15px rgba(65, 105, 225, 0.3);
+}
+
+    .btn-login:hover {
+        background: linear-gradient(135deg, #27408B, #4169E1);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(65, 105, 225, 0.4);
+    }
+
+    .btn-login:active {
+        transform: translateY(-1px);
+    }
+
+.text-primary {
+    color: #4169E1 !important;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+    .text-primary:hover {
+        color: #27408B !important;
+    }
+
+/* وسائط استعلام للشاشات المتوسطة */
+@media (max-width: 992px) {
+    .split {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .left, .right {
+        min-height: auto;
+        padding: 2rem;
+    }
+
+    .left {
+        order: 1;
+        min-height: 35vh;
+    }
+
+    .right {
+        order: 2;
+        min-height: 65vh;
+    }
+
+    .left h1 {
+        font-size: 2.2rem;
+    }
+
+    .login-illustration {
+        max-height: 180px;
+    }
+
+    .login-box {
+        padding: 2rem;
+    }
+}
+
+/* وسائط استعلام للشاشات الصغيرة */
+@media (max-width: 576px) {
+    .left, .right {
+        padding: 1.5rem;
+    }
+
+        .left h1 {
+            font-size: 1.8rem;
+        }
+
+        .left p {
+            font-size: 1rem;
+        }
+
+    .login-illustration {
+        max-height: 150px;
+    }
+
+    .login-box {
+        padding: 1.5rem;
+        border-radius: 15px;
+    }
+
+        .login-box h2 {
+            font-size: 1.6rem;
+        }
+
+    .form-control {
+        padding: 0.85rem;
+    }
+}
+
+/* أنيميشن خفيفة */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-box {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.left-content {
+    animation: fadeInUp 0.8s ease-out;
+}

@@ -1,0 +1,371 @@
+﻿@model MentorMate.ViewModels.RegisterStep3ViewModel
+
+@{
+    ViewData["Title"] = "Complete Your Profile";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MentorMate - Complete Your Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <style>
+        body {
+            background: #ffffff;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .signup-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            font-weight: 600;
+            color: #6c757d;
+        }
+        
+        .step.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .step.completed {
+            background: #28a745;
+            color: white;
+        }
+
+        .form-floating {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-floating .form-control {
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+            padding: 1rem 0.75rem;
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+        
+        .form-floating .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            background: white;
+        }
+        
+        .form-floating label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .form-select {
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+            padding: 1rem 0.75rem;
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            background: white;
+        }
+
+        .btn-complete {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 15px;
+            padding: 15px 40px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-complete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-complete:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn-complete:hover:before {
+            left: 100%;
+        }
+
+        .btn-prev {
+            background: #6c757d;
+            border: none;
+            border-radius: 15px;
+            padding: 12px 30px;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .btn-prev:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .welcome-text {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .welcome-text h2 {
+            color: #2c3e50;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .welcome-text p {
+            color: #6c757d;
+            font-size: 1.1rem;
+        }
+
+        .role-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .section-title {
+            color: #2c3e50;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .character-count {
+            font-size: 0.8rem;
+            color: #6c757d;
+            text-align: right;
+            margin-top: 0.25rem;
+        }
+
+        .form-text {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex justify-content-center align-items-center min-vh-100 p-3">
+        <div class="signup-container w-100" style="max-width: 700px;">
+            <div class="p-4">
+                <!-- Step Indicator -->
+                <div class="step-indicator">
+                    <div class="step completed">1</div>
+                    <div class="step completed">2</div>
+                    <div class="step active">3</div>
+                </div>
+                
+                <!-- Welcome Text -->
+                <div class="welcome-text">
+                    <h2>Complete Your Profile</h2>
+                    <p>Tell us more about yourself as a <span class="role-badge">@Model.Role</span></p>
+                </div>
+
+                <form asp-action="RegisterStep3" method="post" id="profileForm">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <!-- Common Fields -->
+                    <div class="form-floating">
+                        <textarea asp-for="Bio" class="form-control" placeholder="About You" id="bio" style="height: 120px;"></textarea>
+                        <label for="bio"><i class="bi bi-person-lines-fill me-2"></i>About You *</label>
+                            <span asp-validation-for="Bio" class="text-danger"></span>
+                        <div class="character-count">
+                            <span id="bioCount">0</span>/500 characters
+                        </div>
+                        </div>
+
+                    <div class="form-floating">
+                        <input asp-for="LinkedInUrl" class="form-control" placeholder="LinkedIn URL" type="url" id="linkedin" />
+                        <label for="linkedin"><i class="bi bi-linkedin me-2"></i>LinkedIn Profile URL</label>
+                            <span asp-validation-for="LinkedInUrl" class="text-danger"></span>
+                        <div class="form-text">Optional - Share your LinkedIn profile to build trust</div>
+                        </div>
+
+                    <!-- Mentor Fields -->
+                        @if (Model.Role == "Mentor")
+                        {
+                        <h5 class="section-title">
+                            <i class="bi bi-briefcase-fill me-2"></i>Mentor Information
+                        </h5>
+
+                        <div class="form-floating">
+                            <input asp-for="Expertise" class="form-control" placeholder="Area of Expertise" id="expertise" />
+                            <label for="expertise"><i class="bi bi-award me-2"></i>Area of Expertise *</label>
+                                    <span asp-validation-for="Expertise" class="text-danger"></span>
+                            <div class="form-text">e.g., Software Development, Business Management, Marketing</div>
+                                </div>
+
+                        <div class="form-floating">
+                            <input asp-for="Skills" class="form-control" placeholder="Skills" id="skills" />
+                            <label for="skills"><i class="bi bi-tools me-2"></i>Skills *</label>
+                                    <span asp-validation-for="Skills" class="text-danger"></span>
+                            <div class="form-text">e.g., C#, JavaScript, Project Management, Leadership</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input asp-for="YearsOfExperience" class="form-control" placeholder="Years of Experience" type="number" min="0" max="50" id="experience" />
+                                    <label for="experience"><i class="bi bi-calendar-check me-2"></i>Years of Experience *</label>
+                                            <span asp-validation-for="YearsOfExperience" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select asp-for="Availability" class="form-select" id="availability">
+                                                <option value="">Select Availability</option>
+                                                <option value="Full-Time">Full-Time</option>
+                                                <option value="Part-Time">Part-Time</option>
+                                                <option value="Weekends">Weekends Only</option>
+                                                <option value="Evenings">Evenings Only</option>
+                                                <option value="Limited">Limited Availability</option>
+                                            </select>
+                                    <label for="availability"><i class="bi bi-clock me-2"></i>Availability *</label>
+                                            <span asp-validation-for="Availability" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    <!-- Mentee Fields -->
+                        @if (Model.Role == "Mentee")
+                        {
+                        <h5 class="section-title">
+                            <i class="bi bi-mortarboard-fill me-2"></i>Mentee Information
+                        </h5>
+
+                        <div class="form-floating">
+                            <input asp-for="FieldOfStudy" class="form-control" placeholder="Field of Study" id="fieldOfStudy" />
+                            <label for="fieldOfStudy"><i class="bi bi-book me-2"></i>Field of Study *</label>
+                                    <span asp-validation-for="FieldOfStudy" class="text-danger"></span>
+                            <div class="form-text">e.g., Computer Science, Business Administration, Engineering</div>
+                                </div>
+
+                        <div class="form-floating">
+                            <input asp-for="Interests" class="form-control" placeholder="Interests" id="interests" />
+                            <label for="interests"><i class="bi bi-heart me-2"></i>Interests *</label>
+                                    <span asp-validation-for="Interests" class="text-danger"></span>
+                            <div class="form-text">e.g., Web Development, Data Science, Entrepreneurship</div>
+                                </div>
+
+                        <div class="form-floating">
+                            <textarea asp-for="Goals" class="form-control" placeholder="Goals" id="goals" style="height: 100px;"></textarea>
+                            <label for="goals"><i class="bi bi-bullseye me-2"></i>Goals *</label>
+                                    <span asp-validation-for="Goals" class="text-danger"></span>
+                            <div class="form-text">What do you hope to achieve through mentorship?</div>
+                            </div>
+                        }
+
+                        <input type="hidden" asp-for="Role" />
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="RegisterStep2" class="btn btn-prev">
+                            <i class="bi bi-arrow-left me-2"></i>Back
+                        </a>
+                        <button type="submit" class="btn btn-complete">
+                            <i class="bi bi-check-circle me-2"></i>Complete Registration
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        // Character count for bio
+        document.getElementById('bio').addEventListener('input', function() {
+            const count = this.value.length;
+            document.getElementById('bioCount').textContent = count;
+            
+            if (count > 500) {
+                this.value = this.value.substring(0, 500);
+                document.getElementById('bioCount').textContent = 500;
+            }
+        });
+
+        // Form validation
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            const requiredFields = this.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+            } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                alert('Please fill in all required fields.');
+                return false;
+            }
+        });
+
+        // Real-time validation
+        document.querySelectorAll('[required]').forEach(field => {
+            field.addEventListener('blur', function() {
+                if (this.value.trim()) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                } else {
+                    this.classList.remove('is-valid');
+                    this.classList.add('is-invalid');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
