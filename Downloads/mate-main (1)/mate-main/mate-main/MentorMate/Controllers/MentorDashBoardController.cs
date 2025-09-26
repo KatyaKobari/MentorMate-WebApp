@@ -26,13 +26,45 @@ namespace MentorMate.Controllers
             var userId = HttpContext.Session.GetInt32("UserId").Value;
             ViewBag.UserName = HttpContext.Session.GetString("UserName");
             ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
+            
+            // Pass TempData messages to view
+            ViewBag.SuccessMessage = TempData["SuccessMessage"];
+            ViewBag.ErrorMessage = TempData["ErrorMessage"];
 
-            // التحقق من أن المستخدم هو منتور
-            var isMentor = await _context.MentorProfiles
-                .AnyAsync(m => m.MentorId == userId);
+            // التحقق من أن المستخدم هو منتور (من الـ session أولاً)
+            var sessionRole = HttpContext.Session.GetString("UserRole");
+            var isMentor = sessionRole == "Mentor";
 
             if (!isMentor)
-                return RedirectToAction("AccessDenied", "Home");
+            {
+                // إذا لم يكن منتور في الـ session، تحقق من قاعدة البيانات
+                isMentor = await _context.MentorProfiles.AnyAsync(m => m.MentorId == userId);
+                if (isMentor)
+                {
+                    // تحديث الـ session
+                    HttpContext.Session.SetString("UserRole", "Mentor");
+                }
+                else
+                {
+                    // إذا لم يكن لديه ملف منتور، أنشئ واحد
+                    var mentorProfile = new MentorProfile
+                    {
+                        MentorId = userId,
+                        Expertise = "Not specified",
+                        Skills = "Not specified",
+                        YearsOfExperience = 0,
+                        Availability = "Available",
+                        Bio = "",
+                        Rating = 0,
+                        ReviewCount = 0
+                    };
+                    _context.MentorProfiles.Add(mentorProfile);
+                    await _context.SaveChangesAsync();
+                    
+                    // تحديث الـ session
+                    HttpContext.Session.SetString("UserRole", "Mentor");
+                }
+            }
 
             // جلب الطلبات الواردة - التصحيح هنا
             var requests = await _context.MentorshipRequests

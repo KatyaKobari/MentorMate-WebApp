@@ -1,0 +1,198 @@
+@{
+    ViewData["Title"] = "Test Role Switch";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Test Role Switching</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Current User ID:</strong> @Context.Session.GetInt32("UserId")</p>
+                    <p><strong>Current Role:</strong> @Context.Session.GetString("UserRole")</p>
+                    <p><strong>Target Role:</strong> @(Context.Session.GetString("UserRole") == "Mentor" ? "Mentee" : "Mentor")</p>
+                    
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary" onclick="testSwitch()">Test Switch Role</button>
+                        <button class="btn btn-success" onclick="createProfile('Mentor')">Create Mentor Profile</button>
+                        <button class="btn btn-warning" onclick="createProfile('Mentee')">Create Mentee Profile</button>
+                        <button class="btn btn-info" onclick="testMentorToMentee()">Test Mentor → Mentee Switch</button>
+                        <button class="btn btn-primary" onclick="testNewMentorToMentee()">Test New Mentor → Mentee</button>
+                        <button class="btn btn-dark" onclick="debugSession()">Debug Session</button>
+                        <a href="/Account/SwitchRole" class="btn btn-secondary">Direct Link Switch</a>
+                        <a href="/MentorDashBoard" class="btn btn-info">Go to Mentor Dashboard</a>
+                        <a href="/MenteeDashBoard" class="btn btn-warning">Go to Mentee Dashboard</a>
+                    </div>
+                    
+                    <div id="result" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function testSwitch() {
+    console.log('Testing role switch...');
+    document.getElementById('result').innerHTML = '<div class="alert alert-info">Testing switch role...</div>';
+    
+    fetch('/Account/SwitchRole', {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (response.ok) {
+            document.getElementById('result').innerHTML = '<div class="alert alert-success">Switch successful! Reloading page...</div>';
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } else {
+            document.getElementById('result').innerHTML = '<div class="alert alert-danger">Switch failed with status: ' + response.status + '</div>';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('result').innerHTML = '<div class="alert alert-danger">Error: ' + error.message + '</div>';
+    });
+}
+
+function createProfile(role) {
+    console.log('Creating ' + role + ' profile...');
+    document.getElementById('result').innerHTML = '<div class="alert alert-info">Creating ' + role + ' profile...</div>';
+    
+    fetch('/Account/ForceCreateProfile?role=' + role, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Response:', data);
+        if (data.success) {
+            document.getElementById('result').innerHTML = '<div class="alert alert-success">' + data.message + '</div>';
+        } else {
+            document.getElementById('result').innerHTML = '<div class="alert alert-danger">' + data.message + '</div>';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('result').innerHTML = '<div class="alert alert-danger">Error: ' + error.message + '</div>';
+    });
+}
+
+function testMentorToMentee() {
+    console.log('Testing Mentor to Mentee switch...');
+    document.getElementById('result').innerHTML = '<div class="alert alert-info">Testing Mentor → Mentee switch...</div>';
+    
+    // First, ensure we have a mentee profile
+    fetch('/Account/ForceCreateProfile?role=Mentee', {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Profile creation response:', data);
+        if (data.success) {
+            // Now try the switch
+            return fetch('/Account/SwitchRole', {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+        } else {
+            throw new Error('Failed to create mentee profile: ' + data.message);
+        }
+    })
+    .then(response => {
+        console.log('Switch response status:', response.status);
+        if (response.ok) {
+            document.getElementById('result').innerHTML = '<div class="alert alert-success">Mentor → Mentee switch successful! Reloading page...</div>';
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } else {
+            document.getElementById('result').innerHTML = '<div class="alert alert-danger">Switch failed with status: ' + response.status + '</div>';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('result').innerHTML = '<div class="alert alert-danger">Error: ' + error.message + '</div>';
+    });
+}
+
+function testNewMentorToMentee() {
+    console.log('Testing new mentor to mentee conversion...');
+    document.getElementById('result').innerHTML = '<div class="alert alert-info">Testing new mentor to mentee conversion...</div>';
+    
+    fetch('/Account/TestNewMentorToMentee', {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('New mentor to mentee response:', data);
+        if (data.success) {
+            var html = '<div class="alert alert-success"><h6>Success!</h6>';
+            html += '<p><strong>Message:</strong> ' + data.message + '</p>';
+            html += '<p><strong>Has Mentor Profile:</strong> ' + (data.hasMentorProfile ? 'Yes' : 'No') + '</p>';
+            html += '<p><strong>Has Mentee Profile:</strong> ' + (data.hasMenteeProfile ? 'Yes' : 'No') + '</p>';
+            html += '<p><strong>New Role:</strong> ' + data.newRole + '</p>';
+            html += '<p>Redirecting to mentee dashboard...</p>';
+            html += '</div>';
+            document.getElementById('result').innerHTML = html;
+            
+            setTimeout(() => {
+                window.location.href = '/MenteeDashBoard';
+            }, 2000);
+        } else {
+            document.getElementById('result').innerHTML = '<div class="alert alert-danger">Error: ' + data.message + '</div>';
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('result').innerHTML = '<div class="alert alert-danger">Error: ' + error.message + '</div>';
+    });
+}
+
+function debugSession() {
+    console.log('Debugging session...');
+    document.getElementById('result').innerHTML = '<div class="alert alert-info">Checking session...</div>';
+    
+    fetch('/Account/DebugSession', {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Session debug data:', data);
+        var html = '<div class="alert alert-info"><h6>Session Debug Info:</h6>';
+        html += '<p><strong>User ID:</strong> ' + (data.userId || 'null') + '</p>';
+        html += '<p><strong>User Role:</strong> ' + (data.userRole || 'null') + '</p>';
+        html += '<p><strong>User Name:</strong> ' + (data.userName || 'null') + '</p>';
+        html += '<p><strong>User Email:</strong> ' + (data.userEmail || 'null') + '</p>';
+        html += '<p><strong>User Gender:</strong> ' + (data.userGender || 'null') + '</p>';
+        html += '<p><strong>Session ID:</strong> ' + (data.sessionId || 'null') + '</p>';
+        html += '<p><strong>Session Available:</strong> ' + (data.isAvailable ? 'Yes' : 'No') + '</p>';
+        html += '</div>';
+        document.getElementById('result').innerHTML = html;
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('result').innerHTML = '<div class="alert alert-danger">Error: ' + error.message + '</div>';
+    });
+}
+</script>

@@ -175,7 +175,12 @@
                                 <li><a class="dropdown-item" asp-controller="@(userRole == "Mentor" ? "Mentor" : "Mentee")" asp-action="Profile"><i class="bi bi-person me-2"></i>My Profile</a></li>
                                 <li><a class="dropdown-item" asp-controller="@(userRole == "Mentor" ? "Mentor" : "Mentee")" asp-action="EditProfile"><i class="bi bi-pencil-square me-2"></i>Edit Profile</a></li>
                                 <li><hr class="dropdown-divider" /></li>
-                                <li><a class="dropdown-item" href="#" onclick="switchRole()"><i class="bi bi-arrow-repeat me-2"></i>Switch to @(userRole == "Mentor" ? "Mentee" : "Mentor") Mode</a></li>
+                                <li>
+                                    <button type="button" class="dropdown-item btn btn-link text-start w-100" onclick="switchRoleSimple()" style="border: none; background: none; padding: 0.5rem 1rem;">
+                                        <i class="bi bi-arrow-repeat me-2"></i>Switch to @(userRole == "Mentor" ? "Mentee" : "Mentor") Mode
+                                        <small class="text-muted d-block">@(userRole == "Mentor" ? "Become a student and learn" : "Become a teacher and mentor")</small>
+                                    </button>
+                                </li>
                                 <li><hr class="dropdown-divider" /></li>
                                 <li><a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
                             </ul>
@@ -395,11 +400,137 @@
             }
         }
 
-        // Role switching function
+        // Role switching function - new approach
+        function confirmSwitchRole(event) {
+            try {
+                console.log('Switch role function called');
+                
+                // Check if user is logged in
+                const userId = '@Context.Session.GetInt32("UserId")';
+                const userRole = '@Context.Session.GetString("UserRole")';
+                
+                if (!userId || userId === '') {
+                    console.error('User not logged in');
+                    alert('You must be logged in to switch roles. Please log in first.');
+                    event.preventDefault();
+                    return false;
+                }
+                
+                if (!userRole || userRole === '') {
+                    console.error('User role not found in session');
+                    alert('User role not found. Please log in again.');
+                    event.preventDefault();
+                    return false;
+                }
+                
+                console.log(`User ID: ${userId}, Current Role: ${userRole}`);
+                
+                if (confirm('Are you sure you want to switch roles? This will redirect you to the appropriate dashboard.')) {
+                    console.log('User confirmed role switch, proceeding...');
+                    // Show loading indicator
+                    const switchButton = event.target;
+                    const originalText = switchButton.innerHTML;
+                    switchButton.innerHTML = '<i class="bi bi-arrow-repeat me-2"></i>Switching...';
+                    switchButton.style.pointerEvents = 'none';
+                    
+                    // Allow the default link behavior to proceed
+                    return true;
+                } else {
+                    console.log('User cancelled role switch');
+                    event.preventDefault();
+                    return false;
+                }
+            } catch (error) {
+                console.error('Error in confirmSwitchRole function:', error);
+                alert('An error occurred while switching roles. Please try again.');
+                event.preventDefault();
+                return false;
+            }
+        }
+
+        // Keep the old function for backward compatibility
         function switchRole() {
-            if (confirm('Are you sure you want to switch roles? This will redirect you to the appropriate dashboard.')) {
-                // Redirect to role switching action
-                window.location.href = '@Url.Action("SwitchRole", "Account")';
+            console.log('Old switchRole function called - redirecting to new method');
+            const switchButton = document.querySelector('button[onclick*="confirmSwitchRole"]');
+            if (switchButton) {
+                switchButton.click();
+            }
+        }
+
+        // Simple role switching function
+        function switchRoleSimple() {
+            console.log('Simple switch role function called');
+            var currentRole = '@Context.Session.GetString("UserRole")';
+            var targetRole = currentRole === 'Mentor' ? 'Mentee' : 'Mentor';
+            console.log('Current role:', currentRole, 'Target role:', targetRole);
+            
+            if (confirm('Are you sure you want to switch from ' + currentRole + ' to ' + targetRole + '? This will redirect you to the appropriate dashboard.')) {
+                console.log('User confirmed role switch from', currentRole, 'to', targetRole);
+                window.location.href = '/Account/SwitchRole';
+            } else {
+                console.log('User cancelled role switch');
+            }
+        }
+
+        // Alternative method using AJAX
+        function switchRoleAjax() {
+            try {
+                console.log('Switch role AJAX function called');
+                
+                // Check if user is logged in
+                const userId = '@Context.Session.GetInt32("UserId")';
+                const userRole = '@Context.Session.GetString("UserRole")';
+                
+                if (!userId || userId === '') {
+                    console.error('User not logged in');
+                    alert('You must be logged in to switch roles. Please log in first.');
+                    return;
+                }
+                
+                if (!userRole || userRole === '') {
+                    console.error('User role not found in session');
+                    alert('User role not found. Please log in again.');
+                    return;
+                }
+                
+                console.log(`User ID: ${userId}, Current Role: ${userRole}`);
+                
+                if (confirm('Are you sure you want to switch roles? This will redirect you to the appropriate dashboard.')) {
+                    console.log('User confirmed role switch, making AJAX request...');
+                    
+                    // Show loading
+                    const switchButton = event.target;
+                    const originalText = switchButton.innerHTML;
+                    switchButton.innerHTML = '<i class="bi bi-arrow-repeat me-2"></i>Switching...';
+                    switchButton.disabled = true;
+                    
+                    // Make AJAX request
+                    fetch('/Account/SwitchRole', {
+                        method: 'GET',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            // Redirect to the response URL or reload the page
+                            window.location.reload();
+                        } else {
+                            throw new Error('Network response was not ok');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while switching roles. Please try again.');
+                        switchButton.innerHTML = originalText;
+                        switchButton.disabled = false;
+                    });
+                } else {
+                    console.log('User cancelled role switch');
+                }
+            } catch (error) {
+                console.error('Error in switchRoleAjax function:', error);
+                alert('An error occurred while switching roles. Please try again.');
             }
         }
 
@@ -411,6 +542,63 @@
         window.initializeNavbarDropdowns = function() {
             return initializeDropdowns();
         };
+
+        // Show toast messages from TempData
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <text>
+            showToast('@Html.Raw(TempData["SuccessMessage"])', 'success');
+            </text>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <text>
+            showToast('@Html.Raw(TempData["ErrorMessage"])', 'error');
+            </text>
+        }
+
+        function showToast(message, type = 'success') {
+            // Create toast element if it doesn't exist
+            let toastElement = document.getElementById('toast');
+            if (!toastElement) {
+                toastElement = document.createElement('div');
+                toastElement.id = 'toast';
+                toastElement.className = 'toast align-items-center text-bg-success border-0';
+                toastElement.setAttribute('role', 'alert');
+                toastElement.setAttribute('aria-live', 'assertive');
+                toastElement.setAttribute('aria-atomic', 'true');
+                toastElement.innerHTML = `
+                    <div class="d-flex">
+                        <div class="toast-body" id="toastMsg">
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                `;
+                document.body.appendChild(toastElement);
+            }
+
+            const toastMsg = document.getElementById('toastMsg');
+            if (toastMsg) {
+                toastMsg.textContent = message;
+                toastElement.className = `toast align-items-center text-bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+
+                const toast = new bootstrap.Toast(toastElement);
+                toast.show();
+            }
+        }
     </script>
+
+    <!-- Toast Container -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="toastMsg">
+                    <!-- Toast message will be inserted here -->
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

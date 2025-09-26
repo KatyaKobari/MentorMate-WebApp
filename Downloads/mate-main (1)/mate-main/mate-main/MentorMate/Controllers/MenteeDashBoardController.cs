@@ -27,6 +27,42 @@ namespace MentorMate.Controllers
             ViewBag.UserName = HttpContext.Session.GetString("UserName");
             ViewBag.UserRole = HttpContext.Session.GetString("UserRole");
             ViewBag.RequestMentorId = requestMentorId;
+            
+            // Pass TempData messages to view
+            ViewBag.SuccessMessage = TempData["SuccessMessage"];
+            ViewBag.ErrorMessage = TempData["ErrorMessage"];
+
+            // التحقق من أن المستخدم هو منتي (من الـ session أولاً)
+            var sessionRole = HttpContext.Session.GetString("UserRole");
+            var isMentee = sessionRole == "Mentee";
+
+            if (!isMentee)
+            {
+                // إذا لم يكن منتي في الـ session، تحقق من قاعدة البيانات
+                isMentee = await _context.MenteeProfiles.AnyAsync(m => m.MenteeId == userId);
+                if (isMentee)
+                {
+                    // تحديث الـ session
+                    HttpContext.Session.SetString("UserRole", "Mentee");
+                }
+                else
+                {
+                    // إذا لم يكن لديه ملف منتي، أنشئ واحد
+                    var menteeProfile = new MenteeProfile
+                    {
+                        MenteeId = userId,
+                        Bio = "Not specified",
+                        FieldOfStudy = "Not specified",
+                        Interests = "Not specified",
+                        Goals = "Not specified"
+                    };
+                    _context.MenteeProfiles.Add(menteeProfile);
+                    await _context.SaveChangesAsync();
+                    
+                    // تحديث الـ session
+                    HttpContext.Session.SetString("UserRole", "Mentee");
+                }
+            }
 
             // بناء الاستعلام الأساسي - استبعاد المستخدم الحالي
             var mentorsQuery = _context.MentorProfiles

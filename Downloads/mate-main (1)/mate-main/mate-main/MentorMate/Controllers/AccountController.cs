@@ -329,10 +329,20 @@ namespace MentorMate.Controllers
                 return View();
             }
 
-            // جلب الدور (Mentor أو Mentee)
+            // جلب الدور (Mentor أو Mentee) - الأولوية للمنتور إذا كان لديه ملف شخصي
             string role = "Mentee"; // الافتراضي
             var mentor = await _context.MentorProfiles.FirstOrDefaultAsync(m => m.MentorId == user.UserId);
-            if (mentor != null) role = "Mentor";
+            var mentee = await _context.MenteeProfiles.FirstOrDefaultAsync(m => m.MenteeId == user.UserId);
+            
+            if (mentor != null) 
+            {
+                role = "Mentor";
+            }
+            else if (mentee != null)
+            {
+                role = "Mentee";
+            }
+            // إذا لم يكن لديه أي ملف شخصي، يبقى Mentee كافتراضي
 
             // تخزين بيانات المستخدم بالسيشن
             HttpContext.Session.SetInt32("UserId", user.UserId);
@@ -355,62 +365,393 @@ namespace MentorMate.Controllers
 
         // ================= Switch Role =================
         [HttpGet]
+        [Route("Account/SwitchRole")]
         public async Task<IActionResult> SwitchRole()
         {
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
             {
+                _logger.LogWarning("SwitchRole called without valid user session");
                 return RedirectToAction("Login");
             }
 
             var currentRole = HttpContext.Session.GetString("UserRole");
-            var newRole = currentRole == "Mentor" ? "Mentee" : "Mentor";
-
-            // Check if user already has a profile for the new role
-            if (newRole == "Mentor")
+            if (string.IsNullOrEmpty(currentRole))
             {
-                var mentorProfile = await _context.MentorProfiles.FindAsync(userId);
-                if (mentorProfile == null)
+                _logger.LogWarning($"User {userId} has no role in session");
+                return RedirectToAction("Login");
+            }
+
+            var newRole = currentRole == "Mentor" ? "Mentee" : "Mentor";
+            
+            _logger.LogInformation($"SwitchRole called - UserId: {userId}, CurrentRole: {currentRole}, NewRole: {newRole}");
+
+            try
+            {
+                _logger.LogInformation($"User {userId} attempting to switch from {currentRole} to {newRole}");
+
+                // Check if user exists in database
+                var user = await _context.Users.FindAsync(userId);
+                if (user == null)
                 {
-                    // Create a basic mentor profile
-                    mentorProfile = new MentorProfile
+                    _logger.LogError($"User {userId} not found in database");
+                    TempData["ErrorMessage"] = "User not found. Please log in again.";
+                    return RedirectToAction("Login");
+                }
+                _logger.LogInformation($"User {userId} found: {user.FullName} ({user.Email})");
+
+                // Check if user already has both profiles
+                var hasMentorProfile = await _context.MentorProfiles.AnyAsync(m => m.MentorId == userId);
+                var hasMenteeProfile = await _context.MenteeProfiles.AnyAsync(m => m.MenteeId == userId);
+                
+                _logger.LogInformation($"User {userId} - Has Mentor Profile: {hasMentorProfile}, Has Mentee Profile: {hasMenteeProfile}");
+
+                // If user already has the profile for the new role, just switch the session
+                if ((newRole == "Mentor" && hasMentorProfile) || (newRole == "Mentee" && hasMenteeProfile))
+                {
+                    _logger.LogInformation($"User {userId} already has {newRole} profile, switching session only");
+                    HttpContext.Session.SetString("UserRole", newRole);
+                    TempData["SuccessMessage"] = $"Successfully switched to {newRole} role!";
+                    return RedirectToAction("Index", newRole == "Mentor" ? "MentorDashBoard" : "MenteeDashBoard");
+                }
+
+                // Create profile for the new role if it doesn't exist
+                if (newRole == "Mentor")
+                {
+                    _logger.LogInformation($"Checking if user {userId} needs a mentor profile...");
+                    var mentorProfile = await _context.MentorProfiles.FindAsync(userId);
+                    if (mentorProfile == null)
                     {
-                        MentorId = userId.Value,
-                        Expertise = "Not specified",
-                        Skills = "Not specified",
-                        YearsOfExperience = 0,
-                        Availability = "Available",
-                        Bio = "",
-                        Rating = 0,
-                        ReviewCount = 0
-                    };
-                    _context.MentorProfiles.Add(mentorProfile);
+                        _logger.LogInformation($"User {userId} does NOT have mentor profile. Creating new one...");
+                        // Create a basic mentor profile
+                        mentorProfile = new MentorProfile
+                        {
+                            MentorId = userId.Value,
+                            Expertise = "Not specified",
+                            Skills = "Not specified",
+                            YearsOfExperience = 0,
+                            Availability = "Available",
+                            Bio = "",
+                            Rating = 0,
+                            ReviewCount = 0
+                        };
+                        _context.MentorProfiles.Add(mentorProfile);
+                        _logger.LogInformation($"Added mentor profile to context for user ID: {userId}");
+                    }
+                    else
+                    {
+                        _logger.LogInformation($"User {userId} already has mentor profile");
+                    }
+                }
+                else // newRole == "Mentee"
+                {
+                    _logger.LogInformation($"Checking if user {userId} needs a mentee profile...");
+                    var menteeProfile = await _context.MenteeProfiles.FindAsync(userId);
+                    if (menteeProfile == null)
+                    {
+                        _logger.LogInformation($"User {userId} does NOT have mentee profile. Creating new one...");
+                        // Create a basic mentee profile
+                        menteeProfile = new MenteeProfile
+                        {
+                            MenteeId = userId.Value,
+                            Bio = "Not specified",
+                            FieldOfStudy = "Not specified",
+                            Interests = "Not specified",
+                            Goals = "Not specified"
+                        };
+                        _context.MenteeProfiles.Add(menteeProfile);
+                        _logger.LogInformation($"Added mentee profile to context for user ID: {userId}");
+                    }
+                    else
+                    {
+                        _logger.LogInformation($"User {userId} already has mentee profile");
+                    }
+                }
+
+                // Save all changes at once
+                _logger.LogInformation($"Saving changes to database for user {userId}...");
+                try
+                {
                     await _context.SaveChangesAsync();
+                    _logger.LogInformation($"Successfully saved profile changes for user {userId}");
+                }
+                catch (Exception saveEx)
+                {
+                    _logger.LogError($"Database save error for user {userId}: {saveEx.Message}");
+                    _logger.LogError($"Inner exception: {saveEx.InnerException?.Message}");
+                    _logger.LogError($"Inner exception details: {saveEx.InnerException?.ToString()}");
+                    _logger.LogError($"Stack trace: {saveEx.StackTrace}");
+                    
+                    // Try to get more specific error information
+                    var errorMessage = saveEx.Message;
+                    if (saveEx.InnerException != null)
+                    {
+                        errorMessage += $" Inner: {saveEx.InnerException.Message}";
+                    }
+                    
+                    TempData["ErrorMessage"] = $"Database error while creating {newRole} profile: {errorMessage}";
+                    return RedirectToAction("Index", currentRole == "Mentor" ? "MentorDashBoard" : "MenteeDashBoard");
+                }
+
+                // Verify the profile was created
+                _logger.LogInformation($"Verifying {newRole} profile was created for user {userId}...");
+                var profileExists = newRole == "Mentor" 
+                    ? await _context.MentorProfiles.AnyAsync(m => m.MentorId == userId)
+                    : await _context.MenteeProfiles.AnyAsync(m => m.MenteeId == userId);
+                
+                if (!profileExists)
+                {
+                    _logger.LogError($"CRITICAL: Failed to create {newRole} profile for user {userId}");
+                    TempData["ErrorMessage"] = $"Failed to create {newRole} profile. Please try again.";
+                    return RedirectToAction("Index", currentRole == "Mentor" ? "MentorDashBoard" : "MenteeDashBoard");
+                }
+                
+                _logger.LogInformation($"SUCCESS: Verified {newRole} profile exists for user {userId}");
+
+                // Update session with new role
+                HttpContext.Session.SetString("UserRole", newRole);
+                _logger.LogInformation($"User {userId} successfully switched from {currentRole} to {newRole}");
+
+                // Force session to be saved
+                await HttpContext.Session.CommitAsync();
+                _logger.LogInformation($"Session committed for user {userId}");
+
+                // Verify the session was updated
+                var updatedRole = HttpContext.Session.GetString("UserRole");
+                if (updatedRole != newRole)
+                {
+                    _logger.LogError($"Session update failed for user {userId}. Expected: {newRole}, Actual: {updatedRole}");
+                    TempData["ErrorMessage"] = "Failed to update session. Please try again.";
+                    return RedirectToAction("Index", currentRole == "Mentor" ? "MentorDashBoard" : "MenteeDashBoard");
+                }
+                
+                _logger.LogInformation($"Session verification successful for user {userId}. Role: {updatedRole}");
+
+                // Set success message
+                if ((newRole == "Mentor" && !hasMentorProfile) || (newRole == "Mentee" && !hasMenteeProfile))
+                {
+                    TempData["SuccessMessage"] = $"Successfully switched to {newRole} role! A new {newRole.ToLower()} profile has been created for you.";
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = $"Successfully switched to {newRole} role!";
+                }
+
+                // Redirect to the appropriate dashboard
+                var redirectController = newRole == "Mentor" ? "MentorDashBoard" : "MenteeDashBoard";
+                _logger.LogInformation($"FINAL REDIRECT: User {userId} switching from {currentRole} to {newRole}, redirecting to {redirectController}");
+                
+                // Double-check the session before redirect
+                var finalSessionRole = HttpContext.Session.GetString("UserRole");
+                _logger.LogInformation($"FINAL SESSION CHECK: Session role is {finalSessionRole}, expected {newRole}");
+                
+                return RedirectToAction("Index", redirectController);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error switching role for user {userId}: {ex.Message}");
+                _logger.LogError($"Stack trace: {ex.StackTrace}");
+                
+                if (ex.InnerException != null)
+                {
+                    _logger.LogError($"Inner exception: {ex.InnerException.Message}");
+                    _logger.LogError($"Inner exception stack trace: {ex.InnerException.StackTrace}");
+                }
+                
+                // Check if it's a database constraint error
+                string errorMessage = "An error occurred while switching roles.";
+                if (ex.Message.Contains("constraint") || ex.Message.Contains("duplicate"))
+                {
+                    errorMessage = "Unable to switch roles. Please contact support if this issue persists.";
+                }
+                else if (ex.InnerException != null)
+                {
+                    errorMessage = $"Database error: {ex.InnerException.Message}";
+                }
+                else
+                {
+                    errorMessage = $"Error: {ex.Message}";
+                }
+                
+                // If there's an error, redirect back to current dashboard
+                TempData["ErrorMessage"] = errorMessage;
+                
+                // Try to determine the current dashboard based on existing profiles
+                var hasMentorProfile = await _context.MentorProfiles.AnyAsync(m => m.MentorId == userId);
+                var hasMenteeProfile = await _context.MenteeProfiles.AnyAsync(m => m.MenteeId == userId);
+                
+                if (hasMentorProfile && !hasMenteeProfile)
+                {
+                    return RedirectToAction("Index", "MentorDashBoard");
+                }
+                else if (hasMenteeProfile && !hasMentorProfile)
+                {
+                    return RedirectToAction("Index", "MenteeDashBoard");
+                }
+                else
+                {
+                    // Default fallback
+                    return RedirectToAction("Index", currentRole == "Mentor" ? "MentorDashBoard" : "MenteeDashBoard");
                 }
             }
-            else
+        }
+
+        // ================= Test Switch Role =================
+        [HttpGet]
+        public IActionResult TestSwitch()
+        {
+            return View();
+        }
+
+        // ================= Debug Session =================
+        [HttpGet]
+        public IActionResult DebugSession()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            var userRole = HttpContext.Session.GetString("UserRole");
+            var userName = HttpContext.Session.GetString("UserName");
+            var userEmail = HttpContext.Session.GetString("UserEmail");
+            var userGender = HttpContext.Session.GetString("UserGender");
+            
+            var debugInfo = new
             {
-                var menteeProfile = await _context.MenteeProfiles.FindAsync(userId);
-                if (menteeProfile == null)
+                UserId = userId,
+                UserRole = userRole,
+                UserName = userName,
+                UserEmail = userEmail,
+                UserGender = userGender,
+                SessionId = HttpContext.Session.Id,
+                IsAvailable = HttpContext.Session.IsAvailable
+            };
+            
+            return Json(debugInfo);
+        }
+
+        // ================= Test New Mentor to Mentee =================
+        [HttpGet]
+        public async Task<IActionResult> TestNewMentorToMentee()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return Json(new { success = false, message = "User not logged in" });
+            }
+
+            try
+            {
+                _logger.LogInformation($"Testing new mentor to mentee conversion for user {userId}");
+                
+                // Check current profiles
+                var hasMentorProfile = await _context.MentorProfiles.AnyAsync(m => m.MentorId == userId);
+                var hasMenteeProfile = await _context.MenteeProfiles.AnyAsync(m => m.MenteeId == userId);
+                
+                _logger.LogInformation($"User {userId} - Has Mentor: {hasMentorProfile}, Has Mentee: {hasMenteeProfile}");
+                
+                if (!hasMenteeProfile)
                 {
-                    // Create a basic mentee profile
-                    menteeProfile = new MenteeProfile
+                    _logger.LogInformation($"Creating mentee profile for user {userId}");
+                    var menteeProfile = new MenteeProfile
                     {
                         MenteeId = userId.Value,
+                        Bio = "Not specified",
                         FieldOfStudy = "Not specified",
                         Interests = "Not specified",
                         Goals = "Not specified"
                     };
+                    
                     _context.MenteeProfiles.Add(menteeProfile);
                     await _context.SaveChangesAsync();
+                    _logger.LogInformation($"Successfully created mentee profile for user {userId}");
                 }
+                
+                // Update session to Mentee
+                HttpContext.Session.SetString("UserRole", "Mentee");
+                await HttpContext.Session.CommitAsync();
+                
+                return Json(new { 
+                    success = true, 
+                    message = "Successfully created mentee profile and switched role",
+                    hasMentorProfile = hasMentorProfile,
+                    hasMenteeProfile = true,
+                    newRole = "Mentee"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error in TestNewMentorToMentee for user {userId}: {ex.Message}");
+                _logger.LogError($"Stack trace: {ex.StackTrace}");
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
+        }
+
+        // ================= Force Create Profile =================
+        [HttpGet]
+        public async Task<IActionResult> ForceCreateProfile(string role)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return Json(new { success = false, message = "User not logged in" });
             }
 
-            // Update session with new role
-            HttpContext.Session.SetString("UserRole", newRole);
-
-            // Redirect to the appropriate dashboard
-            return RedirectToAction("Index", newRole == "Mentor" ? "MentorDashBoard" : "MenteeDashBoard");
+            try
+            {
+                if (role == "Mentor")
+                {
+                    var existingProfile = await _context.MentorProfiles.FindAsync(userId);
+                    if (existingProfile == null)
+                    {
+                        var mentorProfile = new MentorProfile
+                        {
+                            MentorId = userId.Value,
+                            Expertise = "Not specified",
+                            Skills = "Not specified",
+                            YearsOfExperience = 0,
+                            Availability = "Available",
+                            Bio = "",
+                            Rating = 0,
+                            ReviewCount = 0
+                        };
+                        _context.MentorProfiles.Add(mentorProfile);
+                        await _context.SaveChangesAsync();
+                        return Json(new { success = true, message = "Mentor profile created successfully" });
+                    }
+                    else
+                    {
+                        return Json(new { success = true, message = "Mentor profile already exists" });
+                    }
+                }
+                else if (role == "Mentee")
+                {
+                    var existingProfile = await _context.MenteeProfiles.FindAsync(userId);
+                    if (existingProfile == null)
+                    {
+                        var menteeProfile = new MenteeProfile
+                        {
+                            MenteeId = userId.Value,
+                            FieldOfStudy = "Not specified",
+                            Interests = "Not specified",
+                            Goals = "Not specified"
+                        };
+                        _context.MenteeProfiles.Add(menteeProfile);
+                        await _context.SaveChangesAsync();
+                        return Json(new { success = true, message = "Mentee profile created successfully" });
+                    }
+                    else
+                    {
+                        return Json(new { success = true, message = "Mentee profile already exists" });
+                    }
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Invalid role specified" });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error creating {role} profile: {ex.Message}");
+                return Json(new { success = false, message = $"Error: {ex.Message}" });
+            }
         }
 
         
