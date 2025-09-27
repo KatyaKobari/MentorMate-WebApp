@@ -56,8 +56,6 @@ Modern, responsive homepage featuring:
 #### Mentor Dashboard
 - Overview of received mentorship requests
 - Quick actions: Accept/Decline requests
-- Statistics: Number of mentees, pending requests, activity metrics
-- Request management and status tracking
 
 #### Mentee Dashboard
 - Overview of sent mentorship requests and their status
