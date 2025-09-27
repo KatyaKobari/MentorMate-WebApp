@@ -131,10 +131,19 @@ Modern, responsive homepage featuring:
 - **Notifications**: User notification management
 
 ### Key Relationships
-- One-to-one: User ↔ MentorProfile, User ↔ MenteeProfile
-- One-to-many: User → MentorshipRequests, User → Messages, User → Posts
-- Many-to-many: Mentors ↔ Mentees (through MentorshipRequests)
+### One-to-One (1:1)
+- **User ↔ MentorProfile** (1:0..1) - Each user can have one mentor profile or none
+- **User ↔ MenteeProfile** (1:0..1) - Each user can have one mentee profile or none
 
+### One-to-Many (1:N)
+- **User → MentorshipRequests** (as Mentor) - A mentor can have multiple mentorship requests
+- **User → MentorshipRequests** (as Mentee) - A mentee can have multiple mentorship requests
+- **User → Messages** (as Sender) - A user can send multiple messages
+- **User → Messages** (as Receiver) - A user can receive multiple messages
+- **User → MentorSpacePosts** - A user can create multiple posts
+- **User → MentorSpaceReplies** - A user can create multiple replies
+- **User → Notifications** - A user can have multiple notifications
+- **User → Chats** - A user can have multiple chat sessions
 ---
 
 ## ⚙️ Setup & Installation
