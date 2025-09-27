@@ -41,6 +41,9 @@ Modern, responsive homepage featuring:
 - **Password Reset**: Secure password recovery functionality
 - **Session Management**: 30-minute session timeout with secure cookies
 
+<img width="1841" height="873" alt="image" src="https://github.com/user-attachments/assets/0d6d0827-334a-452d-ac08-f5d646fc5feb" />
+<img width="1818" height="876" alt="image" src="https://github.com/user-attachments/assets/ca36e6c5-e31a-436b-830d-e33dad123164" />
+
 ### 👤 Profile Management
 #### Mentor Profile
 - **Fields**: Full Name, Bio, LinkedIn URL, Expertise, Skills, Years of Experience, Availability, Rating, Review Count
