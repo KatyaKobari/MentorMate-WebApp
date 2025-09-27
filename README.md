@@ -61,12 +61,15 @@ Modern, responsive homepage featuring:
 #### Mentor Dashboard
 - Overview of received mentorship requests
 - Quick actions: Accept/Decline requests
+<img width="1822" height="840" alt="image" src="https://github.com/user-attachments/assets/310dc06e-52bf-4ba7-ae0c-c314ca8c545d" />
 
 #### Mentee Dashboard
 - Overview of sent mentorship requests and their status
 - Mentor recommendations (filtered by expertise/skills)
 - Progress tracking and request history
 - Quick access to available mentors
+  <img width="1822" height="873" alt="image" src="https://github.com/user-attachments/assets/385bf203-f61a-4d97-8f09-0712bb736638" />
+
 
 ### 💬 Real-Time Chat System
 - **One-on-one messaging** between mentors and mentees
@@ -76,6 +79,7 @@ Modern, responsive homepage featuring:
   - Real-time message delivery
   - Chat history per mentorship relationship
 - **Integration**: Connected to mentorship requests for context
+<img width="1822" height="880" alt="image" src="https://github.com/user-attachments/assets/3d6a4f35-8ba6-4b1b-be59-c7da9b80a126" />
 
 ### 📬 Mentorship Request System
 - **Structured Request Process**:
@@ -95,6 +99,7 @@ Modern, responsive homepage featuring:
   - User-generated content with moderation
 - **Engagement**: Like, comment, and share functionality
 - **Categories**: Organized by topics and expertise areas
+<img width="1813" height="880" alt="image" src="https://github.com/user-attachments/assets/b1313e3d-8b6c-4e89-a32b-8e0d1f68ce1b" />
 
 ### 📊 Review & Rating System
 - **Mentor Reviews**: Mentees can rate and review mentors
