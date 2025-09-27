@@ -49,11 +49,13 @@ Modern, responsive homepage featuring:
 - **Fields**: Full Name, Bio, LinkedIn URL, Expertise, Skills, Years of Experience, Availability, Rating, Review Count
 - **Features**: Editable profile, rating system, review tracking
 - **Visibility**: Shown to mentees in search results and recommendations
+<img width="558" height="813" alt="image" src="https://github.com/user-attachments/assets/c3ac3040-77db-4e68-a625-26ba945dc6ea" />
 
 #### Mentee Profile  
 - **Fields**: Full Name, Bio, LinkedIn URL, Field of Study, Interests, Goals
 - **Features**: Editable profile, goal tracking
 - **Purpose**: Used for mentor matching and recommendations
+<img width="747" height="766" alt="image" src="https://github.com/user-attachments/assets/122d8ff6-284c-4a82-b2ea-91df3c291b03" />
 
 ### 🗂️ Role-Based Dashboards
 #### Mentor Dashboard
@@ -147,41 +149,6 @@ Modern, responsive homepage featuring:
 - **User → Chats** - A user can have multiple chat sessions
 ---
 
-## ⚙️ Setup & Installation
-
-### Prerequisites
-- .NET 8.0 SDK
-- SQL Server (LocalDB or full instance)
-- Visual Studio 2022 or VS Code
-
-### Installation Steps
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd MentorMate
-   ```
-
-2. **Configure Database Connection**
-   - Update `appsettings.json` with your SQL Server connection string:
-   ```json
-   "ConnectionStrings": {
-     "DefaultConnection": "Server=YOUR_SERVER;Database=MentorMateDatabase;Trusted_Connection=True;Encrypt=False;MultipleActiveResultSets=true"
-   }
-   ```
-
-3. **Apply Database Migrations**
-   ```bash
-   dotnet ef database update
-   ```
-
-4. **Run the Application**
-   ```bash
-   dotnet run
-   ```
-
-5. **Access the Application**
-   - Open your browser and navigate to: `https://localhost:5000` or `http://localhost:5000`
-
 ### Sample Data
 The application automatically seeds sample data on first run:
 - **Sample Mentor**: Omar Mentor (omar@example.com)
@@ -233,7 +200,41 @@ The application automatically seeds sample data on first run:
 5. Open a Pull Request
 
 ---
+## ⚙️ Setup & Installation
 
+### Prerequisites
+- .NET 8.0 SDK
+- SQL Server (LocalDB or full instance)
+- Visual Studio 2022 or VS Code
+
+### Installation Steps
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd MentorMate
+   ```
+
+2. **Configure Database Connection**
+   - Update `appsettings.json` with your SQL Server connection string:
+   ```json
+   "ConnectionStrings": {
+     "DefaultConnection": "Server=YOUR_SERVER;Database=MentorMateDatabase;Trusted_Connection=True;Encrypt=False;MultipleActiveResultSets=true"
+   }
+   ```
+
+3. **Apply Database Migrations**
+   ```bash
+   dotnet ef database update
+   ```
+
+4. **Run the Application**
+   ```bash
+   dotnet run
+   ```
+
+5. **Access the Application**
+   - Open your browser and navigate to: `https://localhost:5000` or `http://localhost:5000`
+---
 ## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
