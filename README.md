@@ -1,6 +1,7 @@
 # MentorMate
 
 MentorMate is a comprehensive web-based mentorship platform built with ASP.NET MVC that connects **mentors** and **mentees** through structured profiles, mentorship requests, real-time chat, and a collaborative community space. The platform provides role-based dashboards and a streamlined experience for building professional guidance relationships.
+<img width="1763" height="715" alt="image" src="https://github.com/user-attachments/assets/126faa50-b435-4f6a-aaad-2c77fb3bf81f" />
 
 ---
 
